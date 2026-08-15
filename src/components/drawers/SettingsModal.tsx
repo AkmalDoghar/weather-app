@@ -12,6 +12,8 @@ import {
   Globe,
   Bell,
   Sun,
+  Clock,
+  Send,
 } from "lucide-react";
 
 interface SettingsModalProps {
@@ -36,6 +38,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setLanguage,
     notificationsEnabled,
     setNotificationsEnabled,
+    notificationIntervalHours,
+    setNotificationIntervalHours,
+    sendManualNotification,
     t,
   } = useWeather();
 
@@ -196,47 +201,110 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </div>
         </div>
 
-        {/* Notifications Toggle */}
+        {/* Notifications & Schedule */}
         <div
-          className={`flex items-center justify-between p-3.5 rounded-2xl border ${
+          className={`p-4 rounded-2xl border space-y-3.5 transition-all ${
             isDarkMode
               ? "bg-white/5 border-white/10"
               : "bg-slate-100/70 border-slate-200"
           }`}
         >
-          <div className="flex items-center gap-2.5">
-            <Bell className="w-4 h-4 text-sky-500" />
-            <div>
-              <div
-                className={`text-xs font-bold ${isDarkMode ? "text-white" : "text-slate-900"}`}
-              >
-                {t("notifications")}
-              </div>
-              <div
-                className={`text-[11px] ${isDarkMode ? "text-white/50" : "text-slate-500"}`}
-              >
-                {notificationsEnabled
-                  ? "Enabled weather push alerts"
-                  : "Disabled weather push alerts"}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <Bell className="w-4 h-4 text-sky-500" />
+              <div>
+                <div
+                  className={`text-xs font-bold ${isDarkMode ? "text-white" : "text-slate-900"}`}
+                >
+                  {t("notifications")}
+                </div>
+                <div
+                  className={`text-[11px] ${isDarkMode ? "text-white/50" : "text-slate-500"}`}
+                >
+                  {notificationsEnabled
+                    ? `Push alerts active (Every ${notificationIntervalHours}h)`
+                    : "Disabled weather push alerts"}
+                </div>
               </div>
             </div>
-          </div>
-          <button
-            onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-            className={`w-12 h-6 rounded-full transition-colors relative p-0.5 ${
-              notificationsEnabled
-                ? "bg-sky-500"
-                : isDarkMode
-                  ? "bg-white/20"
-                  : "bg-slate-300"
-            }`}
-          >
-            <div
-              className={`w-5 h-5 rounded-full bg-white transition-transform shadow ${
-                notificationsEnabled ? "translate-x-6" : "translate-x-0"
+            <button
+              onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+              className={`w-12 h-6 rounded-full transition-colors relative p-0.5 ${
+                notificationsEnabled
+                  ? "bg-sky-500"
+                  : isDarkMode
+                    ? "bg-white/20"
+                    : "bg-slate-300"
               }`}
-            />
-          </button>
+            >
+              <div
+                className={`w-5 h-5 rounded-full bg-white transition-transform shadow ${
+                  notificationsEnabled ? "translate-x-6" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+
+          {notificationsEnabled && (
+            <div className="pt-2 border-t border-white/10 space-y-3">
+              {/* Frequency selection */}
+              <div className="space-y-1.5">
+                <label
+                  className={`text-[11px] font-semibold flex items-center gap-1.5 ${
+                    isDarkMode ? "text-sky-200/70" : "text-slate-600"
+                  }`}
+                >
+                  <Clock className="w-3.5 h-3.5 text-sky-400" />
+                  Notification Frequency (Interval)
+                </label>
+                <div
+                  className={`grid grid-cols-5 gap-1 p-1 rounded-xl border ${
+                    isDarkMode ? "bg-black/20 border-white/10" : "bg-slate-200/50 border-slate-300/60"
+                  }`}
+                >
+                  {[
+                    { label: "1h", value: 1 },
+                    { label: "3h", value: 3 },
+                    { label: "6h", value: 6 },
+                    { label: "12h", value: 12 },
+                    { label: "24h", value: 24 },
+                  ].map((item) => (
+                    <button
+                      key={item.value}
+                      onClick={() => setNotificationIntervalHours(item.value)}
+                      className={`py-1.5 text-[11px] font-bold rounded-lg transition-all ${
+                        notificationIntervalHours === item.value
+                          ? "bg-sky-500 text-white shadow-sm"
+                          : isDarkMode
+                            ? "text-white/60 hover:text-white hover:bg-white/5"
+                            : "text-slate-600 hover:text-slate-900 hover:bg-white/40"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+                <div className={`text-[10px] ${isDarkMode ? "text-white/40" : "text-slate-500"}`}>
+                  Default: 24 Hours (Daily weather report)
+                </div>
+              </div>
+
+              {/* Manual Trigger Test Button */}
+              <div className="pt-1 flex items-center justify-between">
+                <button
+                  onClick={sendManualNotification}
+                  className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                    isDarkMode
+                      ? "bg-sky-500/20 border-sky-500/30 text-sky-300 hover:bg-sky-500/30"
+                      : "bg-sky-50 border-sky-200 text-sky-700 hover:bg-sky-100"
+                  }`}
+                >
+                  <Send className="w-3.5 h-3.5 text-sky-400" />
+                  Send Test Notification Now
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Dark Mode Toggle */}

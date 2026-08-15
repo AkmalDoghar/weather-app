@@ -153,3 +153,5 @@ export type PressureUnit = 'hPa' | 'inHg';
 export type ThemePreset = 'glassmorphism' | 'neomorphism' | 'material' | 'minimal';
 export type ThemeMode = 'light' | 'dark' | 'system' | 'dynamic';
 export type Language = 'en' | 'ur';
+export type NotificationInterval = 1 | 3 | 6 | 12 | 24;
+

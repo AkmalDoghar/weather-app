@@ -28,6 +28,8 @@ interface WeatherContextType {
   isDarkMode: boolean;
   language: Language;
   notificationsEnabled: boolean;
+  notificationIntervalHours: number;
+  lastNotificationTime: number | null;
   favorites: LocationData[];
   recentSearches: LocationData[];
   t: (key: keyof typeof translations.en) => string;
@@ -39,6 +41,8 @@ interface WeatherContextType {
   setDarkMode: (dark: boolean) => void;
   setLanguage: (lang: Language) => void;
   setNotificationsEnabled: (enabled: boolean) => void;
+  setNotificationIntervalHours: (hours: number) => void;
+  sendManualNotification: () => void;
   toggleFavorite: (loc: LocationData) => void;
   isFavorite: (id: string | number) => boolean;
   refreshWeather: () => void;
@@ -75,6 +79,11 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({
   const [language, setLanguage] = useState<Language>("en");
   const [notificationsEnabled, setNotificationsEnabledState] =
     useState<boolean>(false);
+  const [notificationIntervalHours, setNotificationIntervalHoursState] =
+    useState<number>(24);
+  const [lastNotificationTime, setLastNotificationTime] = useState<
+    number | null
+  >(null);
   const [favorites, setFavorites] = useState<LocationData[]>([]);
   const [recentSearches, setRecentSearches] = useState<LocationData[]>([]);
   const notifiedAlertIds = React.useRef<string[]>([]);
@@ -154,6 +163,18 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({
       );
       if (savedNotifications !== null)
         setNotificationsEnabledState(savedNotifications === "true");
+
+      const savedInterval = localStorage.getItem(
+        "weatherx_notification_interval",
+      );
+      if (savedInterval)
+        setNotificationIntervalHoursState(parseInt(savedInterval, 10) || 24);
+
+      const savedLastTime = localStorage.getItem(
+        "weatherx_last_notification_time",
+      );
+      if (savedLastTime)
+        setLastNotificationTime(parseInt(savedLastTime, 10));
 
       const savedLocation =
         localStorage.getItem("weatherx_location") ||
@@ -298,18 +319,110 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem("weatherx_lang", lang);
   };
 
+  const changeNotificationInterval = (hours: number) => {
+    setNotificationIntervalHoursState(hours);
+    localStorage.setItem("weatherx_notification_interval", hours.toString());
+  };
+
+  const triggerWeatherNotification = async (customMessage?: string) => {
+    if (typeof window === "undefined") return;
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
+    if (!weatherData) return;
+
+    const current = weatherData.current;
+    const tempStr = formatTemp(current.temperature, tempUnit);
+    const title = `🌤️ Weather Update: ${weatherData.location.name}`;
+    const bodyText = customMessage
+      ? customMessage
+      : `${current.conditionText} • ${tempStr} (Feels ${formatTemp(current.feelsLike, tempUnit)}). Rain chance: ${current.rainChance}%.`;
+
+    const options: NotificationOptions = {
+      body: bodyText,
+      icon: "/favicon.ico",
+      badge: "/favicon.ico",
+      tag: "weather-update",
+    };
+
+    try {
+      if ("serviceWorker" in navigator) {
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (reg && "showNotification" in reg) {
+          await reg.showNotification(title, options);
+          setLastNotificationTime(Date.now());
+          localStorage.setItem("weatherx_last_notification_time", Date.now().toString());
+          return;
+        }
+      }
+      new Notification(title, options);
+    } catch (e) {
+      console.warn("Native Notification call failed on mobile browser:", e);
+    }
+
+    const now = Date.now();
+    setLastNotificationTime(now);
+    localStorage.setItem("weatherx_last_notification_time", now.toString());
+  };
+
   const changeNotificationsEnabled = async (enabled: boolean) => {
-    if (enabled && typeof window !== "undefined" && "Notification" in window) {
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        setNotificationsEnabledState(false);
-        localStorage.setItem("weatherx_notifications_enabled", "false");
-        return;
+    if (!enabled) {
+      setNotificationsEnabledState(false);
+      localStorage.setItem("weatherx_notifications_enabled", "false");
+      return;
+    }
+
+    if (typeof window === "undefined") return;
+
+    if (!("Notification" in window)) {
+      alert("Mobile Notice: Web Notifications are not supported in this browser tab. On iPhone, add this app to your Home Screen first.");
+      setNotificationsEnabledState(false);
+      return;
+    }
+
+    let perm: NotificationPermission = Notification.permission;
+    if (perm === "default") {
+      try {
+        perm = await new Promise<NotificationPermission>((resolve) => {
+          const res = Notification.requestPermission((p) => resolve(p));
+          if (res && typeof (res as any).then === "function") {
+            (res as any).then(resolve);
+          }
+        });
+      } catch (e) {
+        console.warn("Request permission error:", e);
       }
     }
 
-    setNotificationsEnabledState(enabled);
-    localStorage.setItem("weatherx_notifications_enabled", enabled.toString());
+    if (perm !== "granted") {
+      alert("Notification Permission Denied! Please allow notifications in your browser/mobile site settings.");
+      setNotificationsEnabledState(false);
+      localStorage.setItem("weatherx_notifications_enabled", "false");
+      return;
+    }
+
+    setNotificationsEnabledState(true);
+    localStorage.setItem("weatherx_notifications_enabled", "true");
+
+    if (weatherData) {
+      await triggerWeatherNotification(
+        "Weather notifications activated! Scheduled every " + notificationIntervalHours + " hours."
+      );
+    }
+  };
+
+  const sendManualNotification = async () => {
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      alert("Web Notifications are not supported in this browser window.");
+      return;
+    }
+
+    if (Notification.permission !== "granted") {
+      const perm = await Notification.requestPermission();
+      if (perm !== "granted") {
+        alert("Please enable notification permissions in your browser settings first.");
+        return;
+      }
+    }
+    await triggerWeatherNotification("Test Notification: Mobile & Desktop weather alerts are active!");
   };
 
   const changeTempUnit = (unit: TempUnit) => {
@@ -327,39 +440,30 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.setItem("weatherx_pressure_unit", unit);
   };
 
+  // Background Periodic Notification Scheduler
   useEffect(() => {
     if (!notificationsEnabled || typeof window === "undefined" || !weatherData)
       return;
     if (!("Notification" in window) || Notification.permission !== "granted")
       return;
 
-    const alertNotifications = weatherData.alerts.filter(
-      (alert) =>
-        !notifiedAlertIds.current.includes(alert.id) &&
-        ["warning", "severe", "extreme"].includes(alert.severity),
-    );
+    const checkAndTrigger = () => {
+      const now = Date.now();
+      const intervalMs = notificationIntervalHours * 60 * 60 * 1000;
+      if (!lastNotificationTime || now - lastNotificationTime >= intervalMs) {
+        triggerWeatherNotification();
+      }
+    };
 
-    if (alertNotifications.length) {
-      alertNotifications.forEach((alert) => {
-        new Notification(`Weather Alert: ${alert.event}`, {
-          body: `${alert.headline} \n${alert.instruction}`,
-          silent: false,
-        });
-        notifiedAlertIds.current.push(alert.id);
-      });
-      return;
-    }
-
-    const current = weatherData.current;
-    new Notification(`Weather update for ${weatherData.location.name}`, {
-      body: `${current.conditionText}, ${formatTemp(current.temperature, tempUnit)} • Humidity ${current.humidity}%`,
-      silent: true,
-    });
+    checkAndTrigger();
+    const intervalTimer = setInterval(checkAndTrigger, 60000); // Check every minute
+    return () => clearInterval(intervalTimer);
   }, [
-    weatherData,
     notificationsEnabled,
+    weatherData,
+    notificationIntervalHours,
+    lastNotificationTime,
     tempUnit,
-    weatherData?.location?.name,
   ]);
 
   const t = (key: keyof typeof translations.en): string => {
@@ -381,6 +485,9 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({
         themePreset,
         isDarkMode,
         language,
+        notificationsEnabled,
+        notificationIntervalHours,
+        lastNotificationTime,
         favorites,
         recentSearches,
         t,
@@ -392,6 +499,8 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({
         setDarkMode: changeDarkMode,
         setLanguage: changeLanguage,
         setNotificationsEnabled: changeNotificationsEnabled,
+        setNotificationIntervalHours: changeNotificationInterval,
+        sendManualNotification,
         toggleFavorite,
         isFavorite,
         refreshWeather,
