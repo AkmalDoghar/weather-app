@@ -11,7 +11,10 @@ import {
   Droplets,
   CloudRain,
   Clock,
+  Sparkles,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { PageLoader } from '@/components/layout/PageLoader';
 import { CoolWeatherIcon } from '@/components/weather/CoolWeatherIcon';
 
 function HourlyCard3D({ item, index, tempUnit }: { item: any; index: number; tempUnit: any }) {
@@ -89,7 +92,9 @@ function HourlyCard3D({ item, index, tempUnit }: { item: any; index: number; tem
 }
 
 export default function HourlyPage() {
-  const { weatherData, location, tempUnit } = useWeather();
+  const { weatherData, location, tempUnit, isLoading } = useWeather();
+
+  if (isLoading) return <PageLoader message="Loading hourly forecast..." />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-[#0e1d3e] to-[#060b19] text-white">
@@ -112,22 +117,20 @@ export default function HourlyPage() {
         />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 space-y-8">
-        {/* Page Header */}
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
-          <Link href="/">
-            <div className="p-3 rounded-2xl bg-white/10 border border-white/15 hover:bg-white/20 transition-all">
-              <ArrowLeft className="w-5 h-5" />
-            </div>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight">24-Hour Forecast</h1>
-            <p className="text-sky-300/70 text-sm flex items-center gap-1.5 mt-0.5">
-              <Clock className="w-3.5 h-3.5" />
-              {location.name}, {location.country}
-            </p>
+      {/* Floating Western Fire Chiefs / Mapbox Style Header */}
+      <PageHeader
+        title="24-Hour Forecast"
+        subtitle={`${location.name}, ${location.country}`}
+        icon={<Clock className="w-5 h-5" />}
+        isDarkMode={true}
+        extra={
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-bold shadow-sm">
+            <Sparkles className="w-3.5 h-3.5" /> <span className="hidden sm:inline">24h Data</span><span className="sm:hidden">24h</span>
           </div>
-        </motion.div>
+        }
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 pb-8 space-y-6">
 
         {/* 3D Hourly Cards Grid */}
         {!weatherData ? (

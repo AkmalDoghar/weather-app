@@ -3,7 +3,7 @@
 import React, { ReactNode } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 interface PageHeaderProps {
   title: string;
@@ -11,7 +11,6 @@ interface PageHeaderProps {
   icon?: ReactNode;
   isDarkMode?: boolean;
   extra?: ReactNode;
-  backLabel?: string;
   backHref?: string;
 }
 
@@ -21,60 +20,86 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   icon,
   isDarkMode = true,
   extra,
-  backLabel = "Back",
   backHref = "/",
 }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -16 }}
+    <motion.header
+      initial={{ opacity: 0, y: -15 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="w-full flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between py-1"
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="sticky top-3 z-50 w-full px-2 sm:px-4 mb-6 sm:mb-8"
     >
-      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-        {/* Sleek Glass 3D Back Button */}
-        <Link href={backHref} passHref>
+      <div
+        className={`max-w-7xl mx-auto flex items-center justify-between gap-3 px-3 py-2 sm:px-5 sm:py-3 rounded-[24px] sm:rounded-full border backdrop-blur-2xl shadow-2xl transition-all ${
+          isDarkMode
+            ? "bg-[#0b1528]/50 border-white/15 text-white shadow-black/30"
+            : "bg-white/40 border-slate-200/60 text-slate-900 shadow-slate-900/10"
+        }`}
+      >
+        {/* Left: Integrated Glass Back Button */}
+        <Link href={backHref} passHref className="flex-shrink-0 select-none">
           <motion.div
-            whileHover={{ scale: 1.05, x: -2 }}
-            whileTap={{ scale: 0.94 }}
-            className={`flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl border backdrop-blur-xl shadow-lg transition-all cursor-pointer select-none group ${
+            whileHover={{ scale: 1.08, x: -2 }}
+            whileTap={{ scale: 0.92 }}
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border flex items-center justify-center transition-all cursor-pointer group ${
               isDarkMode
-                ? "bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 shadow-sky-500/10"
-                : "bg-white/80 border-slate-300 text-slate-800 hover:bg-white shadow-slate-900/10"
+                ? "bg-white/10 border-white/15 hover:bg-white/20 text-sky-400"
+                : "bg-slate-100 border-slate-200 hover:bg-slate-200 text-sky-600"
             }`}
+            title="Back"
           >
-            <ChevronLeft className="w-5 h-5 text-sky-400 group-hover:-translate-x-0.5 transition-transform" />
-            <span className="text-xs sm:text-sm font-bold tracking-wide">{backLabel}</span>
+            <ChevronLeft className="w-5 h-5 stroke-[2.5] group-hover:-translate-x-0.5 transition-transform" />
           </motion.div>
         </Link>
 
-        {/* Title & Subtitle */}
-        <div className="min-w-0 flex-1">
-          <h1
-            className={`text-xl sm:text-3xl font-black tracking-tight flex items-center gap-2 truncate ${
-              isDarkMode ? "text-white" : "text-slate-900"
-            }`}
-          >
-            {icon ? (
-              <span className="p-1.5 sm:p-2 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-400 flex-shrink-0">
-                {icon}
-              </span>
-            ) : null}
-            <span className="truncate">{title}</span>
-          </h1>
-          {subtitle ? (
-            <p
-              className={`text-xs sm:text-sm truncate mt-0.5 font-medium ${
-                isDarkMode ? "text-sky-200/70" : "text-slate-600"
+        {/* Center: Full-Width Prominent Header Title & Subtitle */}
+        <div className="flex-1 min-w-0 flex items-center gap-2.5 sm:gap-3.5 justify-start">
+          {icon ? (
+            <span
+              className={`p-2 rounded-xl flex-shrink-0 hidden sm:flex items-center justify-center border ${
+                isDarkMode
+                  ? "bg-sky-500/15 border-sky-400/25 text-sky-400"
+                  : "bg-sky-500/10 border-sky-500/20 text-sky-600"
               }`}
             >
-              {subtitle}
-            </p>
+              {icon}
+            </span>
           ) : null}
+          <div className="min-w-0 flex flex-col justify-center">
+            <h1 className="text-base sm:text-lg md:text-xl font-black tracking-tight truncate leading-tight flex items-center gap-2">
+              <span className="sm:hidden">{icon}</span>
+              <span className="truncate">{title}</span>
+            </h1>
+            {subtitle ? (
+              <p
+                className={`text-xs sm:text-sm font-semibold truncate leading-tight mt-0.5 ${
+                  isDarkMode ? "text-sky-300/80" : "text-slate-600"
+                }`}
+              >
+                {subtitle}
+              </p>
+            ) : null}
+          </div>
+        </div>
+
+        {/* Right: Embedded Right Button / Badge */}
+        <div className="flex-shrink-0 flex items-center justify-end">
+          {extra ? (
+            extra
+          ) : (
+            <div
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold shadow-sm ${
+                isDarkMode
+                  ? "bg-emerald-500/15 border-emerald-400/30 text-emerald-300"
+                  : "bg-emerald-500/10 border-emerald-500/20 text-emerald-700"
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Live</span>
+            </div>
+          )}
         </div>
       </div>
-
-      {extra ? <div className="flex items-center gap-2 self-start sm:self-auto">{extra}</div> : null}
-    </motion.div>
+    </motion.header>
   );
 };

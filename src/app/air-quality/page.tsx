@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { useWeather } from '@/context/WeatherContext';
 import { ArrowLeft, Wind, Leaf, AlertTriangle } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { PageLoader } from '@/components/layout/PageLoader';
 
 interface PollutantCardProps {
   label: string;
@@ -135,7 +137,9 @@ function AQIGauge({ aqi, status, color, isDarkMode }: { aqi: number; status: str
 }
 
 export default function AirQualityPage() {
-  const { weatherData, location, isDarkMode } = useWeather();
+  const { weatherData, location, isDarkMode, isLoading } = useWeather();
+
+  if (isLoading) return <PageLoader isDarkMode={isDarkMode} message="Loading air quality data..." />;
 
   return (
     <div className={`min-h-screen transition-colors duration-500 ${
@@ -160,26 +164,27 @@ export default function AirQualityPage() {
         />
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-8 space-y-8">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
-          <Link href="/">
-            <div className={`p-3 rounded-2xl border transition-all ${
-              isDarkMode
-                ? 'bg-white/10 border-white/15 hover:bg-white/20 text-white'
-                : 'bg-white/70 border-slate-300 hover:bg-white text-slate-800 shadow-sm'
-            }`}>
-              <ArrowLeft className="w-5 h-5" />
-            </div>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight flex items-center gap-2">
-              <Leaf className="w-8 h-8 text-emerald-500" />
-              Air Quality Index
-            </h1>
-            <p className={`text-sm mt-0.5 ${isDarkMode ? 'text-emerald-300/70' : 'text-slate-600'}`}>{location.name}, {location.country}</p>
+      {/* Floating Western Fire Chiefs / Mapbox Style Header */}
+      <PageHeader
+        title="Air Quality Index"
+        subtitle={`${location.name}, ${location.country}`}
+        icon={<Leaf className="w-5 h-5 text-emerald-400" />}
+        isDarkMode={isDarkMode}
+        extra={
+          <div
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold shadow-sm bg-[#0b1528]/80"
+            style={{
+              borderColor: weatherData ? weatherData.airQuality.aqiColor + '50' : 'rgba(16,185,129,0.4)',
+              color: weatherData ? weatherData.airQuality.aqiColor : '#34d399',
+            }}
+          >
+            <AlertTriangle className="w-3.5 h-3.5" />
+            <span>AQI {weatherData ? weatherData.airQuality.aqi : '--'}</span>
           </div>
-        </motion.div>
+        }
+      />
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4 pb-8 space-y-6">
 
         {!weatherData ? (
           <div className="flex justify-center items-center h-64">

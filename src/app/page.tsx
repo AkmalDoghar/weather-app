@@ -23,7 +23,8 @@ import { FavoritesModal } from "@/components/drawers/FavoritesModal";
 import { SettingsModal } from "@/components/drawers/SettingsModal";
 import { AIAssistant } from "@/components/ai/AIAssistant";
 import { motion } from "framer-motion";
-import { RotateCw, AlertTriangle, CloudSun } from "lucide-react";
+import { RotateCw, AlertTriangle } from "lucide-react";
+import { PageLoader } from "@/components/layout/PageLoader";
 
 export default function Home() {
   const {
@@ -101,17 +102,9 @@ export default function Home() {
           </motion.div>
         )}
 
-        {/* Skeleton Loading */}
+        {/* Premium Page Loader */}
         {isLoading && !weatherData ? (
-          <div className="space-y-6 animate-pulse">
-            <div className="h-64 rounded-3xl bg-white/8 border border-white/10" />
-            <div className="h-40 rounded-3xl bg-white/8 border border-white/10" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="h-72 rounded-3xl bg-white/8 border border-white/10" />
-              <div className="h-72 rounded-3xl bg-white/8 border border-white/10" />
-            </div>
-            <div className="h-56 rounded-3xl bg-white/8 border border-white/10" />
-          </div>
+          <PageLoader message="Fetching weather data..." />
         ) : (
           <>
             {/* Live Weather Alerts */}

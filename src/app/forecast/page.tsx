@@ -13,6 +13,8 @@ import {
   ArrowUp,
   ArrowDown,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { PageLoader } from '@/components/layout/PageLoader';
 import { CoolWeatherIcon } from '@/components/weather/CoolWeatherIcon';
 
 function DayCard3D({ item, unitTemp, index }: { item: any; unitTemp: any; index: number }) {
@@ -131,7 +133,9 @@ function DayCard3D({ item, unitTemp, index }: { item: any; unitTemp: any; index:
 }
 
 export default function ForecastPage() {
-  const { weatherData, location, tempUnit, isDarkMode } = useWeather();
+  const { weatherData, location, tempUnit, isDarkMode, isLoading } = useWeather();
+
+  if (isLoading) return <PageLoader isDarkMode={isDarkMode} message="Loading forecast..." />;
 
   return (
     <div className={`min-h-screen transition-colors duration-500 ${
@@ -157,25 +161,20 @@ export default function ForecastPage() {
         />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8 space-y-8">
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
-          <Link href="/">
-            <div className={`p-3 rounded-2xl border transition-all ${
-              isDarkMode
-                ? 'bg-white/10 border-white/15 hover:bg-white/20 text-white'
-                : 'bg-white/70 border-slate-300 hover:bg-white text-slate-800 shadow-sm'
-            }`}>
-              <ArrowLeft className="w-5 h-5" />
-            </div>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight">7-Day Forecast</h1>
-            <p className={`text-sm flex items-center gap-1.5 mt-0.5 ${isDarkMode ? 'text-sky-300/70' : 'text-slate-600'}`}>
-              <Calendar className="w-3.5 h-3.5" />
-              {location.name}, {location.country}
-            </p>
+      {/* Floating Western Fire Chiefs / Mapbox Style Header */}
+      <PageHeader
+        title="7-Day Forecast"
+        subtitle={`${location.name}, ${location.country}`}
+        icon={<Calendar className="w-5 h-5 text-sky-400" />}
+        isDarkMode={isDarkMode}
+        extra={
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-bold shadow-sm">
+            <Sun className="w-3.5 h-3.5 text-amber-400" /> <span className="hidden sm:inline">Daily Outlook</span><span className="sm:hidden">Outlook</span>
           </div>
-        </motion.div>
+        }
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 pb-8 space-y-6">
 
         {!weatherData ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-pulse">

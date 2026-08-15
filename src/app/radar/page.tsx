@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useWeather } from '@/context/WeatherContext';
 import { ArrowLeft, Layers, CloudRain, Cloud, Thermometer, Wind, Navigation } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { PageLoader } from '@/components/layout/PageLoader';
 
 const LAYERS = [
   { id: 'rain', label: 'Rain', icon: CloudRain, color: 'sky', tile: 'precipitation_new' },
@@ -14,7 +16,9 @@ const LAYERS = [
 ] as const;
 
 export default function RadarPage() {
-  const { location, isDarkMode } = useWeather();
+  const { location, isDarkMode, isLoading } = useWeather();
+
+  if (isLoading) return <PageLoader isDarkMode={isDarkMode} message="Loading radar..." />;
   const [activeLayer, setActiveLayer] = useState<'rain' | 'clouds' | 'temp' | 'wind'>('rain');
 
   const activeLayerInfo = LAYERS.find((l) => l.id === activeLayer)!;
@@ -45,43 +49,26 @@ export default function RadarPage() {
         />
       </div>
 
-      <div className="relative z-10 flex flex-col flex-1 max-w-7xl w-full mx-auto px-4 py-8 gap-6">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <div className={`p-3 rounded-2xl border transition-all ${
-                isDarkMode
-                  ? 'bg-white/10 border-white/15 hover:bg-white/20 text-white'
-                  : 'bg-white/70 border-slate-300 hover:bg-white text-slate-800 shadow-sm'
-              }`}>
-                <ArrowLeft className="w-5 h-5" />
-              </div>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-black tracking-tight flex items-center gap-2">
-                <Layers className="w-7 h-7 text-emerald-500" />
-                Weather Radar
-              </h1>
-              <div className={`flex items-center gap-2 text-sm mt-0.5 ${isDarkMode ? 'text-sky-300/70' : 'text-slate-600'}`}>
-                <Navigation className="w-3.5 h-3.5" />
-                {location.name}, {location.country} •{' '}
-                {location.latitude.toFixed(4)}°N, {location.longitude.toFixed(4)}°E
-              </div>
-            </div>
-          </div>
-
-          {/* Active Layer Badge */}
+      {/* Floating Western Fire Chiefs / Mapbox Style Header */}
+      <PageHeader
+        title="Weather Radar"
+        subtitle={`${location.name}, ${location.country}`}
+        icon={<Layers className="w-5 h-5 text-emerald-400" />}
+        isDarkMode={isDarkMode}
+        extra={
           <motion.div
             key={activeLayer}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-2xl border font-bold text-sm bg-${activeLayerInfo.color}-500/20 border-${activeLayerInfo.color}-400/40 text-${activeLayerInfo.color}-500`}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border font-bold text-xs bg-emerald-500/20 border-emerald-400/30 text-emerald-300 shadow-sm"
           >
-            <activeLayerInfo.icon className="w-4 h-4" />
-            {activeLayerInfo.label} Layer Active
+            <activeLayerInfo.icon className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{activeLayerInfo.label} Layer</span><span className="sm:hidden">{activeLayerInfo.label}</span>
           </motion.div>
-        </motion.div>
+        }
+      />
+
+      <div className="relative z-10 flex flex-col flex-1 max-w-7xl w-full mx-auto px-4 pb-8 gap-6">
 
         {/* Layer Controls — 3D floating pills */}
         <motion.div

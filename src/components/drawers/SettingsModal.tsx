@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useWeather } from "@/context/WeatherContext";
 import { TempUnit, SpeedUnit, PressureUnit, Language } from "@/types/weather";
 import {
@@ -44,21 +44,52 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     t,
   } = useWeather();
 
+  useEffect(() => {
+    if (isOpen) {
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md transition-colors ${
+      onClick={onClose}
+      className={`fixed inset-0 z-[60] flex items-end sm:items-center justify-center backdrop-blur-md transition-colors ${
         isDarkMode ? "bg-slate-950/80" : "bg-slate-900/40"
       }`}
     >
+      {/* Modal container — sits above BottomNav on mobile */}
       <div
-        className={`w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-6 relative max-h-[90vh] overflow-y-auto border backdrop-blur-2xl transition-all ${
+        onClick={(e) => e.stopPropagation()}
+        className={`w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl border backdrop-blur-2xl transition-all flex flex-col ${
           isDarkMode
-            ? "bg-slate-900/95 border-white/15 text-white shadow-black/60"
-            : "bg-white/95 border-slate-200 text-slate-900 shadow-slate-900/10"
+            ? "bg-slate-900 border-white/15 text-white shadow-black/60"
+            : "bg-white border-slate-200 text-slate-900 shadow-slate-900/10"
         }`}
+        style={{
+          maxHeight: "calc(100dvh - 88px)",
+          WebkitOverflowScrolling: "touch",
+        } as React.CSSProperties}
       >
+        {/* Sticky drag handle (mobile) */}
+        <div className="flex justify-center pt-3 pb-1 sm:hidden flex-shrink-0">
+          <div className={`w-10 h-1 rounded-full ${isDarkMode ? "bg-white/25" : "bg-slate-300"}`} />
+        </div>
+
+        {/* Scrollable content area */}
+        <div
+          className="overflow-y-scroll overscroll-contain p-6 space-y-6 flex-1 pb-10"
+          style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-y" } as React.CSSProperties}
+        >
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -343,6 +374,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             />
           </button>
         </div>
+        </div>{/* end scrollable content */}
       </div>
     </div>
   );

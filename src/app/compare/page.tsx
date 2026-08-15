@@ -19,9 +19,13 @@ import {
   Droplets,
   Wind,
 } from "lucide-react";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { PageLoader } from "@/components/layout/PageLoader";
 
 export default function ComparePage() {
-  const { weatherData, location, tempUnit, isDarkMode } = useWeather();
+  const { weatherData, location, tempUnit, isDarkMode, isLoading } = useWeather();
+
+  if (isLoading) return <PageLoader isDarkMode={isDarkMode} message="Loading compare data..." />;
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [suggestions, setSuggestions] = useState<LocationData[]>([]);
@@ -69,35 +73,20 @@ export default function ComparePage() {
       className={`min-h-screen relative flex flex-col theme-glassmorphism ${isDarkMode ? "text-white" : "text-slate-900"}`}
     >
       <BackgroundManager />
-      <div className="relative z-10 max-w-5xl mx-auto px-4 py-8 space-y-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-4"
-        >
-          <Link href="/">
-            <div
-              className={`p-3 rounded-2xl transition-all ${isDarkMode ? "bg-white/10 border border-white/15 hover:bg-white/20" : "bg-slate-100/75 border border-slate-200 hover:bg-slate-200"}`}
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </div>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight flex items-center gap-2">
-              <GitCompare className="w-7 h-7 text-purple-400" /> Compare Cities
-            </h1>
-            <p
-              className={
-                isDarkMode
-                  ? "text-white/50 text-sm mt-0.5"
-                  : "text-slate-500 text-sm mt-0.5"
-              }
-            >
-              Compare weather conditions side by side
-            </p>
+      {/* Floating Western Fire Chiefs / Mapbox Style Header */}
+      <PageHeader
+        title="Compare Cities"
+        subtitle="Compare weather conditions side by side"
+        icon={<GitCompare className="w-5 h-5 text-purple-400" />}
+        isDarkMode={isDarkMode}
+        extra={
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-300 text-xs font-bold shadow-sm">
+            <GitCompare className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Side-by-Side</span><span className="sm:hidden">Compare</span>
           </div>
-        </motion.div>
+        }
+      />
+
+      <div className="relative z-10 max-w-5xl mx-auto px-4 pb-8 space-y-6">
 
         {/* Search Second City */}
         <div className="relative max-w-md">

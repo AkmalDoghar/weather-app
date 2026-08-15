@@ -5,28 +5,30 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useWeather } from '@/context/WeatherContext';
 import { Heart, MapPin, Trash2, ArrowLeft, Plus } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { PageLoader } from '@/components/layout/PageLoader';
 
 export default function FavoritesPage() {
-  const { favorites, toggleFavorite, setLocation, location, isDarkMode } = useWeather();
+  const { favorites, toggleFavorite, setLocation, location, isDarkMode, isLoading } = useWeather();
+
+  if (isLoading) return <PageLoader isDarkMode={true} message="Loading favorites..." />;
 
   return (
     <div className="min-h-screen bg-[#060b19] text-white">
-      <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
-          <Link href="/">
-            <div className="p-3 rounded-2xl bg-white/10 border border-white/15 hover:bg-white/20 transition-all">
-              <ArrowLeft className="w-5 h-5" />
-            </div>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight">Saved Locations</h1>
-            <p className="text-sky-300/70 text-sm flex items-center gap-1.5 mt-0.5">
-              <Heart className="w-3.5 h-3.5 fill-rose-400 text-rose-400" />
-              {favorites.length} saved {favorites.length === 1 ? 'location' : 'locations'}
-            </p>
+      {/* Floating Western Fire Chiefs / Mapbox Style Header */}
+      <PageHeader
+        title="Saved Locations"
+        subtitle={`${favorites.length} saved ${favorites.length === 1 ? 'location' : 'locations'}`}
+        icon={<Heart className="w-5 h-5 fill-rose-400 text-rose-400" />}
+        isDarkMode={true}
+        extra={
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-500/20 border border-rose-400/30 text-rose-300 text-xs font-bold shadow-sm">
+            <Heart className="w-3.5 h-3.5 fill-current" /> <span>{favorites.length} <span className="hidden sm:inline">Saved</span></span>
           </div>
-        </motion.div>
+        }
+      />
+
+      <div className="max-w-3xl mx-auto px-4 pb-8 space-y-6">
 
         {favorites.length === 0 ? (
           <motion.div
