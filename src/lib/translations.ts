@@ -19,6 +19,10 @@ export const translations = {
     noFavoritesYet: "No favorite locations added yet.",
     favoritesSubtitle: "Save your frequently visited cities for quick access.",
     launchWelcomeIntro: "Show SkyPulse PRO Welcome Intro",
+    downloadApp: "Install / Download App",
+    downloadAppSubtitle: "Install SkyPulse PRO on your mobile home screen",
+    installAppBtn: "Download & Install App",
+    appInstalled: "App Installed & Active",
 
     // Metrics & Details
     feelsLike: "Feels Like",
@@ -162,6 +166,10 @@ export const translations = {
     noFavoritesYet: "ابھی تک کوئی پسندیدہ مقام شامل نہیں کیا گیا۔",
     favoritesSubtitle: "فوری رسائی کے لیے اپنے شہر محفوظ کریں۔",
     launchWelcomeIntro: "سکائی پلس ویلکم اسکرین دکھائیں",
+    downloadApp: "ایپ ڈاؤن لوڈ / انسٹال کریں",
+    downloadAppSubtitle: "سکائی پلس پرو کو اپنے موبائل فون میں انسٹال کریں",
+    installAppBtn: "ایپ ڈاؤن لوڈ کریں",
+    appInstalled: "ایپ انسٹال ہے",
 
     // Metrics & Details
     feelsLike: "محسوس ہوتا ہے",

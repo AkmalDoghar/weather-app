@@ -2,23 +2,29 @@
   "name": "SkyPulse PRO Weather",
   "short_name": "SkyPulse PRO",
   "description": "Precision Weather Intelligence & Doppler Radar Engine",
-  "start_url": "/",
+  "start_url": "/?mode=standalone",
   "display": "standalone",
   "background_color": "#060b19",
   "theme_color": "#060b19",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "/app-icon.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/logo.png",
+      "src": "/app-icon.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

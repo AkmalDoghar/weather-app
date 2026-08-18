@@ -146,7 +146,7 @@ export default function Home() {
                 <div className="absolute -inset-3 rounded-3xl bg-gradient-to-r from-sky-400 via-teal-300 to-indigo-500 opacity-60 blur-xl animate-pulse" />
                 <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-3xl bg-slate-900/75 border border-white/20 backdrop-blur-xl flex items-center justify-center p-3 shadow-2xl overflow-hidden">
                   <img
-                    src="/logo.png"
+                    src="/app-icon.png"
                     alt="SkyPulse PRO Logo"
                     className="w-full h-full object-cover rounded-2xl drop-shadow-[0_0_20px_rgba(56,189,248,0.6)]"
                   />

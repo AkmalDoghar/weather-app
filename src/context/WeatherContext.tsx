@@ -47,6 +47,8 @@ interface WeatherContextType {
   isFavorite: (id: string | number) => boolean;
   refreshWeather: () => void;
   useGPSLocation: () => void;
+  isAppInstalled: boolean;
+  triggerInstallApp: () => void;
 }
 
 const DEFAULT_LOCATION: LocationData = {
@@ -87,6 +89,54 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({
   const [favorites, setFavorites] = useState<LocationData[]>([]);
   const [recentSearches, setRecentSearches] = useState<LocationData[]>([]);
   const notifiedAlertIds = React.useRef<string[]>([]);
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [isAppInstalled, setIsAppInstalled] = useState<boolean>(false);
+
+  // PWA install prompt handler
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+
+    const handleAppInstalled = () => {
+      setIsAppInstalled(true);
+      setInstallPrompt(null);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
+
+    if (window.matchMedia("(display-mode: standalone)").matches) {
+      setIsAppInstalled(true);
+    }
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleAppInstalled);
+    };
+  }, []);
+
+  const triggerInstallApp = async () => {
+    if (installPrompt) {
+      try {
+        await installPrompt.prompt();
+        const choice = await installPrompt.userChoice;
+        if (choice && choice.outcome === "accepted") {
+          setIsAppInstalled(true);
+          setInstallPrompt(null);
+        }
+      } catch (e) {
+        console.warn("Install prompt error:", e);
+      }
+    } else {
+      if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+        window.open("https://skyplusweather.vercel.app/", "_blank");
+      }
+    }
+  };
 
   // Apply theme preset class
   useEffect(() => {
@@ -191,29 +241,44 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-  // Auto GPS on first load
+  // Auto GPS & Location permission listener for automatic weather updates
   useEffect(() => {
     if (typeof window === "undefined" || !navigator.geolocation) return;
 
-    // If a saved location exists, skip auto GPS so user selection persists
-    const savedLocation =
-      localStorage.getItem("weatherx_location") ||
-      localStorage.getItem("skypulse_location");
-    if (savedLocation) return;
+    const requestGPSAndFetchWeather = () => {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          try {
+            const { latitude, longitude } = pos.coords;
+            const loc = await reverseGeocode(latitude, longitude);
+            if (loc && loc.name) {
+              setLocation(loc);
+            }
+          } catch (e) {
+            console.error("GPS reverse geocode error", e);
+          }
+        },
+        (err) => console.log("GPS permission status:", err.message),
+        { timeout: 10000, enableHighAccuracy: true }
+      );
+    };
 
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        try {
-          const { latitude, longitude } = pos.coords;
-          const loc = await reverseGeocode(latitude, longitude);
-          if (loc && loc.name) setLocation(loc);
-        } catch (e) {
-          console.error("GPS reverse geocode error", e);
-        }
-      },
-      (err) => console.log("GPS permission error", err),
-      { timeout: 8000 },
-    );
+    // Auto-fetch on mount if permission allowed
+    requestGPSAndFetchWeather();
+
+    // Automatically trigger update when user enables location in phone/browser settings
+    if (typeof navigator !== "undefined" && navigator.permissions && navigator.permissions.query) {
+      navigator.permissions
+        .query({ name: "geolocation" as PermissionName })
+        .then((permissionStatus) => {
+          permissionStatus.onchange = () => {
+            if (permissionStatus.state === "granted") {
+              requestGPSAndFetchWeather();
+            }
+          };
+        })
+        .catch(() => {});
+    }
   }, []);
 
   // Fetch weather when location changes
@@ -505,6 +570,8 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({
         isFavorite,
         refreshWeather,
         useGPSLocation,
+        isAppInstalled,
+        triggerInstallApp,
       }}
     >
       {children}

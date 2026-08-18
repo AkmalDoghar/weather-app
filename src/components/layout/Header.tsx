@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWeather } from "@/context/WeatherContext";
 import { searchCities } from "@/lib/api";
@@ -90,19 +91,27 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="flex items-center justify-between gap-2 sm:justify-start">
           {/* Logo */}
-          <div className="flex items-center min-w-0">
-            <img
-              src="/logo.png"
-              alt="WeatherX logo"
-              className="w-12 h-14 object-cover rounded-full"
-            />
-            <span
-              className={`ml-2 mr-2 text-lg font-bold ${isDarkMode ? "text-white" : "text-slate-900"}`}
-            >
-              {t("appName")}
-            </span>
-
-          </div>
+          <Link href="/" className="flex items-center gap-2.5 group select-none">
+            <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-sky-400 via-indigo-500 to-purple-600 p-[1px] shadow-lg shadow-sky-500/25 transition-transform group-hover:scale-105">
+              <div className="relative w-full h-full rounded-[11px] overflow-hidden bg-slate-950 flex items-center justify-center">
+                <img
+                  src="/app-icon.png"
+                  alt="SkyPulse PRO logo"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span
+                className={`text-base sm:text-lg font-black tracking-tight leading-none ${isDarkMode ? "text-white" : "text-slate-900"}`}
+              >
+                {t("appName")}
+              </span>
+              <span className={`text-[10px] font-semibold tracking-wider text-sky-400 uppercase hidden sm:block`}>
+                PRO
+              </span>
+            </div>
+          </Link>
 
           {/* Action Controls Dock */}
           <div className="flex items-center gap-1.5 sm:gap-2">

@@ -14,6 +14,9 @@ import {
   Sun,
   Clock,
   Send,
+  Smartphone,
+  Download,
+  CheckCircle,
 } from "lucide-react";
 
 interface SettingsModalProps {
@@ -41,6 +44,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     notificationIntervalHours,
     setNotificationIntervalHours,
     sendManualNotification,
+    isAppInstalled,
+    triggerInstallApp,
     t,
   } = useWeather();
 
@@ -336,6 +341,53 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
             </div>
           )}
+        </div>
+
+        {/* Download / Install App Option */}
+        <div
+          className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all ${
+            isDarkMode
+              ? "bg-gradient-to-r from-sky-500/15 via-indigo-500/10 to-purple-500/15 border-sky-500/30"
+              : "bg-gradient-to-r from-sky-50 via-indigo-50 to-blue-50 border-sky-200"
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-sky-500/20 text-sky-400 border border-sky-400/30 shadow-md">
+              <Smartphone className="w-5 h-5 text-sky-400 animate-pulse" />
+            </div>
+            <div>
+              <div
+                className={`text-xs font-bold ${isDarkMode ? "text-white" : "text-slate-900"}`}
+              >
+                {t("downloadApp")}
+              </div>
+              <div
+                className={`text-[11px] ${isDarkMode ? "text-white/60" : "text-slate-500"}`}
+              >
+                {t("downloadAppSubtitle")}
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={triggerInstallApp}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg transition-all ${
+              isAppInstalled
+                ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 cursor-default"
+                : "bg-gradient-to-r from-sky-500 to-blue-600 text-white hover:from-sky-400 hover:to-blue-500 shadow-sky-500/25 active:scale-95"
+            }`}
+          >
+            {isAppInstalled ? (
+              <>
+                <CheckCircle className="w-4 h-4 text-emerald-400" />
+                <span>{t("appInstalled")}</span>
+              </>
+            ) : (
+              <>
+                <Download className="w-4 h-4" />
+                <span>{t("installAppBtn")}</span>
+              </>
+            )}
+          </button>
         </div>
 
         {/* Dark Mode Toggle */}

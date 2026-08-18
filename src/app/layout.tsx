@@ -28,6 +28,10 @@ export const metadata: Metadata = {
   keywords: ['SkyPulse PRO', 'Weather Intelligence', 'Activity Advisor', 'Outfit Advisor', 'Air Quality', 'Weather Map', 'PWA'],
   authors: [{ name: 'SkyPulse Team' }],
   manifest: '/manifest.json',
+  icons: {
+    icon: '/app-icon.png',
+    apple: '/app-icon.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
