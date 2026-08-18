@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useWeather } from '@/context/WeatherContext';
 
 export const OutfitAdvisorCard: React.FC = () => {
-  const { weatherData, isDarkMode } = useWeather();
+  const { weatherData, isDarkMode, t } = useWeather();
 
   if (!weatherData?.outfit) return null;
   const { summary, suggestions } = weatherData.outfit;
@@ -35,10 +35,10 @@ export const OutfitAdvisorCard: React.FC = () => {
           </div>
           <div>
             <h3 className={`font-black text-base tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-              Outfit Advisor
+              {t('outfitAdvisorTitle')}
             </h3>
             <p className={`text-[11px] ${isDarkMode ? 'text-white/50' : 'text-slate-500'}`}>
-              Smart clothing picks for today
+              {t('outfitAdvisorSubtitle')}
             </p>
           </div>
         </div>

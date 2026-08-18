@@ -6,7 +6,7 @@ import { useWeather } from '@/context/WeatherContext';
 import { CloudRain, Droplets } from 'lucide-react';
 
 export const RainTimelineCard: React.FC = () => {
-  const { weatherData, isDarkMode } = useWeather();
+  const { weatherData, isDarkMode, t } = useWeather();
 
   if (!weatherData?.rainTimeline) return null;
 
@@ -35,9 +35,9 @@ export const RainTimelineCard: React.FC = () => {
         </div>
         <div>
           <h3 className={`font-black text-base tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-            Rain Risk Timeline
+            {t('rainTimelineTitle')}
           </h3>
-          <p className={`text-[11px] ${isDarkMode ? 'text-white/50' : 'text-slate-500'}`}>24-hour precipitation probability</p>
+          <p className={`text-[11px] ${isDarkMode ? 'text-white/50' : 'text-slate-500'}`}>{t('rainTimelineSubtitle')}</p>
         </div>
       </div>
 

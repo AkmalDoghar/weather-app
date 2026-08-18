@@ -118,7 +118,7 @@ function getAIResponse(
 }
 
 export const AIAssistant: React.FC = () => {
-  const { weatherData, tempUnit, isDarkMode } = useWeather();
+  const { weatherData, tempUnit, isDarkMode, language, t } = useWeather();
   const [open, setOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [panelPos, setPanelPos] = useState({ x: 0, y: 0 });
@@ -131,7 +131,9 @@ export const AIAssistant: React.FC = () => {
       messages: [
         {
           role: "assistant",
-          text: "Hi! I'm Sky Plus 🌤️ Ask me anything about today's weather — should you go outside? What to wear? Will it rain? I'm here to help!",
+          text: language === "ur" 
+            ? "السلام علیکم! میں سکائی پلس AI ہوں۔ 🌤️ آج کے موسم کے بارے میں کچھ بھی پوچھیں — کیا باہر جانا چاہیے؟ کیا پہنیں؟ کیا بارش ہوگی؟"
+            : "Hi! I'm Sky Plus 🌤️ Ask me anything about today's weather — should you go outside? What to wear? Will it rain? I'm here to help!",
           timestamp: Date.now(),
         },
       ],

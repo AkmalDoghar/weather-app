@@ -16,12 +16,13 @@ const LAYERS = [
 ] as const;
 
 export default function RadarPage() {
-  const { location, isDarkMode, isLoading } = useWeather();
+  const { location, isDarkMode, isLoading, t } = useWeather();
 
-  if (isLoading) return <PageLoader isDarkMode={isDarkMode} message="Loading radar..." />;
+  if (isLoading) return <PageLoader isDarkMode={isDarkMode} message={t("loadingRadar")} />;
   const [activeLayer, setActiveLayer] = useState<'rain' | 'clouds' | 'temp' | 'wind'>('rain');
 
   const activeLayerInfo = LAYERS.find((l) => l.id === activeLayer)!;
+  const activeLayerLabel = (t("layers") as any)[activeLayer] || activeLayerInfo.label;
 
   const mapSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${location.longitude - 2}%2C${location.latitude - 2}%2C${location.longitude + 2}%2C${location.latitude + 2}&layer=mapnik&marker=${location.latitude}%2C${location.longitude}`;
 
@@ -49,9 +50,9 @@ export default function RadarPage() {
         />
       </div>
 
-      {/* Floating Western Fire Chiefs / Mapbox Style Header */}
+      {/* Header */}
       <PageHeader
-        title="Weather Radar"
+        title={t("weatherRadar")}
         subtitle={`${location.name}, ${location.country}`}
         icon={<Layers className="w-5 h-5 text-emerald-400" />}
         isDarkMode={isDarkMode}
@@ -63,14 +64,14 @@ export default function RadarPage() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border font-bold text-xs bg-emerald-500/20 border-emerald-400/30 text-emerald-300 shadow-sm"
           >
             <activeLayerInfo.icon className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{activeLayerInfo.label} Layer</span><span className="sm:hidden">{activeLayerInfo.label}</span>
+            <span className="hidden sm:inline">{activeLayerLabel} {t("layerLabel")}</span><span className="sm:hidden">{activeLayerLabel}</span>
           </motion.div>
         }
       />
 
       <div className="relative z-10 flex flex-col flex-1 max-w-7xl w-full mx-auto px-4 pb-8 gap-6">
 
-        {/* Layer Controls — 3D floating pills */}
+        {/* Layer Controls */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -81,6 +82,7 @@ export default function RadarPage() {
           {LAYERS.map((layer, i) => {
             const Icon = layer.icon;
             const isActive = activeLayer === layer.id;
+            const translatedName = (t("layers") as any)[layer.id] || layer.label;
             return (
               <motion.button
                 key={layer.id}
@@ -99,7 +101,7 @@ export default function RadarPage() {
                 }`}
               >
                 <Icon className="w-4 h-4" />
-                {layer.label}
+                {translatedName}
                 {isActive && (
                   <motion.span
                     layoutId="layer-dot"
@@ -111,7 +113,7 @@ export default function RadarPage() {
           })}
         </motion.div>
 
-        {/* Main Map Container with 3D frame effect */}
+        {/* Main Map Container */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96, rotateX: 6 }}
           animate={{ opacity: 1, scale: 1, rotateX: 0 }}
@@ -135,13 +137,15 @@ export default function RadarPage() {
               isDarkMode ? 'bg-slate-900/90 border-white/15 text-white' : 'bg-white/90 border-slate-200 text-slate-900'
             }`}
           >
-            <div className={`text-[10px] font-bold uppercase tracking-widest mb-2 ${isDarkMode ? 'text-white/40' : 'text-slate-500'}`}>{activeLayerInfo.label} Legend</div>
+            <div className={`text-[10px] font-bold uppercase tracking-widest mb-2 ${isDarkMode ? 'text-white/40' : 'text-slate-500'}`}>
+              {activeLayerLabel} {t("legendLabel")}
+            </div>
             <div className="flex items-center gap-2">
               <div className="h-2.5 w-28 rounded-full bg-gradient-to-r from-sky-400 via-amber-400 to-rose-500" />
             </div>
             <div className={`flex justify-between text-[10px] mt-1 w-28 ${isDarkMode ? 'text-white/40' : 'text-slate-500'}`}>
-              <span>Low</span>
-              <span>High</span>
+              <span>{t("low")}</span>
+              <span>{t("high")}</span>
             </div>
           </motion.div>
 
@@ -169,10 +173,10 @@ export default function RadarPage() {
           className="grid grid-cols-2 sm:grid-cols-4 gap-4"
         >
           {[
-            { label: 'Map Coverage', value: '±2° radius', icon: '🗺️' },
-            { label: 'Data Source', value: 'OpenStreetMap', icon: '📡' },
-            { label: 'Radar Layer', value: activeLayerInfo.label, icon: '📊' },
-            { label: 'Auto Update', value: 'Every 5 min', icon: '🔄' },
+            { label: t("mapCoverage"), value: t("radiusCoverage"), icon: '🗺️' },
+            { label: t("dataSource"), value: 'OpenStreetMap', icon: '📡' },
+            { label: t("radarLayer"), value: activeLayerLabel, icon: '📊' },
+            { label: t("autoUpdate"), value: t("every5min"), icon: '🔄' },
           ].map((info, i) => (
             <motion.div
               key={i}

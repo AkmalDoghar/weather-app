@@ -176,8 +176,8 @@ export const CurrentWeatherHero: React.FC = () => {
             </div>
             <div className="text-sm font-semibold text-sky-500 max-w-xs">
               {current.isDay
-                ? "Daytime Weather Conditions"
-                : "Nighttime Weather Conditions"}
+                ? t("daytimeWeather")
+                : t("nighttimeWeather")}
             </div>
           </div>
         </div>

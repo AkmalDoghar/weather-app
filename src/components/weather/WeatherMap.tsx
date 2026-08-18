@@ -24,7 +24,7 @@ export const WeatherMap: React.FC = () => {
         <Link href="/radar">
           <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20 hover:bg-emerald-500/20 transition-all">
             <ExternalLink className="w-3 h-3" />
-            Full Map
+            {t("radar")}
           </motion.div>
         </Link>
       </div>

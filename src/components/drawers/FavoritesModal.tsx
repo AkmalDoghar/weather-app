@@ -48,12 +48,12 @@ export const FavoritesModal: React.FC<FavoritesModalProps> = ({ isOpen, onClose 
 
         {/* Favorites */}
         <div className="space-y-2">
-          <label className={`text-xs font-bold uppercase tracking-wider ${isDarkMode ? 'text-white/50' : 'text-slate-500'}`}>Saved Locations</label>
+          <label className={`text-xs font-bold uppercase tracking-wider ${isDarkMode ? 'text-white/50' : 'text-slate-500'}`}>{t('favorites')}</label>
           {favorites.length === 0 ? (
             <div className={`p-4 rounded-2xl border text-center text-sm ${
               isDarkMode ? 'bg-white/5 border-white/10 text-white/40' : 'bg-slate-100 border-slate-200 text-slate-500'
             }`}>
-              No favorites yet. Tap the ♥ on any location to save it.
+              {t('noFavoritesYet')}
             </div>
           ) : (
             favorites.map((loc) => (
@@ -87,7 +87,7 @@ export const FavoritesModal: React.FC<FavoritesModalProps> = ({ isOpen, onClose 
           <div className="space-y-2">
             <label className={`text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${isDarkMode ? 'text-white/50' : 'text-slate-500'}`}>
               <Clock className="w-3.5 h-3.5" />
-              Recent Searches
+              {t('recentSearches')}
             </label>
             {recentSearches.map((loc) => (
               <button

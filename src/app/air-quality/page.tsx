@@ -136,10 +136,14 @@ function AQIGauge({ aqi, status, color, isDarkMode }: { aqi: number; status: str
   return <canvas ref={canvasRef} width={280} height={180} className="mx-auto" />;
 }
 
-export default function AirQualityPage() {
-  const { weatherData, location, isDarkMode, isLoading } = useWeather();
+import { translateAqiStatus } from '@/lib/translations';
 
-  if (isLoading) return <PageLoader isDarkMode={isDarkMode} message="Loading air quality data..." />;
+export default function AirQualityPage() {
+  const { weatherData, location, isDarkMode, isLoading, language, t } = useWeather();
+
+  if (isLoading) return <PageLoader isDarkMode={isDarkMode} message={t("loadingAirQuality")} />;
+
+  const translatedStatus = weatherData ? translateAqiStatus(weatherData.airQuality.aqiStatus, language) : '';
 
   return (
     <div className={`min-h-screen transition-colors duration-500 ${
@@ -164,9 +168,9 @@ export default function AirQualityPage() {
         />
       </div>
 
-      {/* Floating Western Fire Chiefs / Mapbox Style Header */}
+      {/* Floating Header */}
       <PageHeader
-        title="Air Quality Index"
+        title={t("airQualityIndex")}
         subtitle={`${location.name}, ${location.country}`}
         icon={<Leaf className="w-5 h-5 text-emerald-400" />}
         isDarkMode={isDarkMode}
@@ -200,10 +204,12 @@ export default function AirQualityPage() {
               className="p-8 wx-glass-card text-center"
               style={{ perspective: 1000 }}
             >
-              <h2 className={`text-lg font-bold mb-4 uppercase tracking-widest ${isDarkMode ? 'text-white/60' : 'text-slate-500'}`}>Current AQI Score</h2>
+              <h2 className={`text-lg font-bold mb-4 uppercase tracking-widest ${isDarkMode ? 'text-white/60' : 'text-slate-500'}`}>
+                {t("currentAqiScore")}
+              </h2>
               <AQIGauge
                 aqi={weatherData.airQuality.aqi}
-                status={weatherData.airQuality.aqiStatus}
+                status={translatedStatus}
                 color={weatherData.airQuality.aqiColor}
                 isDarkMode={isDarkMode}
               />
@@ -212,18 +218,18 @@ export default function AirQualityPage() {
                 style={{ background: weatherData.airQuality.aqiColor + '22', borderColor: weatherData.airQuality.aqiColor + '60', color: weatherData.airQuality.aqiColor }}
               >
                 <AlertTriangle className="w-4 h-4" />
-                {weatherData.airQuality.aqiStatus} Air Quality
+                {translatedStatus} {t("airQualityLabel")}
               </div>
             </motion.div>
 
             {/* Pollutant Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" style={{ perspective: '1200px' }}>
-              <PollutantCard label="Fine Particles PM2.5" value={weatherData.airQuality.pm2_5} unit="µg/m³" color="#FF7043" max={75} index={0} />
-              <PollutantCard label="Coarse Particles PM10" value={weatherData.airQuality.pm10} unit="µg/m³" color="#FFA726" max={150} index={1} />
-              <PollutantCard label="Carbon Monoxide CO" value={weatherData.airQuality.co} unit="µg/m³" color="#AB47BC" max={500} index={2} />
-              <PollutantCard label="Nitrogen Dioxide NO₂" value={weatherData.airQuality.no2} unit="µg/m³" color="#26C6DA" max={100} index={3} />
-              <PollutantCard label="Ozone O₃" value={weatherData.airQuality.o3} unit="µg/m³" color="#66BB6A" max={180} index={4} />
-              <PollutantCard label="Sulphur Dioxide SO₂" value={weatherData.airQuality.so2} unit="µg/m³" color="#EC407A" max={100} index={5} />
+              <PollutantCard label={t("fineParticles")} value={weatherData.airQuality.pm2_5} unit="µg/m³" color="#FF7043" max={75} index={0} />
+              <PollutantCard label={t("coarseParticles")} value={weatherData.airQuality.pm10} unit="µg/m³" color="#FFA726" max={150} index={1} />
+              <PollutantCard label={t("carbonMonoxide")} value={weatherData.airQuality.co} unit="µg/m³" color="#AB47BC" max={500} index={2} />
+              <PollutantCard label={t("nitrogenDioxide")} value={weatherData.airQuality.no2} unit="µg/m³" color="#26C6DA" max={100} index={3} />
+              <PollutantCard label={t("ozone")} value={weatherData.airQuality.o3} unit="µg/m³" color="#66BB6A" max={180} index={4} />
+              <PollutantCard label={t("sulphurDioxide")} value={weatherData.airQuality.so2} unit="µg/m³" color="#EC407A" max={100} index={5} />
             </div>
           </>
         )}

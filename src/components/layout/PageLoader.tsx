@@ -4,6 +4,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Cloud, Droplets, Wind, Thermometer } from "lucide-react";
 
+import { useWeather } from "@/context/WeatherContext";
+
 interface PageLoaderProps {
   isDarkMode?: boolean;
   message?: string;
@@ -19,8 +21,13 @@ const ICON_COLORS = [
 
 export const PageLoader: React.FC<PageLoaderProps> = ({
   isDarkMode = true,
-  message = "Loading weather data...",
+  message,
 }) => {
+  const { language, t } = useWeather();
+  const displayMessage = message
+    ? (language === 'ur' && (message === "Loading weather data..." || message === "Fetching weather data...") ? t("loading") : message)
+    : t("loading");
+
   return (
     <div
       className={`fixed inset-0 z-40 flex flex-col items-center justify-center gap-8 ${
@@ -127,7 +134,7 @@ export const PageLoader: React.FC<PageLoaderProps> = ({
             isDarkMode ? "text-sky-300/80" : "text-slate-500"
           }`}
         >
-          {message}
+          {displayMessage}
         </motion.p>
 
         {/* Animated loading dots */}

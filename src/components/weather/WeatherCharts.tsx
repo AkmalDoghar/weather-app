@@ -18,7 +18,7 @@ import { TrendingUp } from 'lucide-react';
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip, Filler);
 
 export const WeatherCharts: React.FC = () => {
-  const { weatherData, tempUnit, isDarkMode } = useWeather();
+  const { weatherData, tempUnit, isDarkMode, t } = useWeather();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chartRef = useRef<Chart | null>(null);
 
@@ -129,11 +129,11 @@ export const WeatherCharts: React.FC = () => {
       <div className="flex items-center justify-between">
         <h3 className={`text-lg font-bold flex items-center gap-2 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
           <TrendingUp className="w-5 h-5 text-sky-400" />
-          12-Hour Weather Trends
+          {t("weatherCharts")}
         </h3>
         <div className="flex gap-3">
-          {[{ label: 'Temp', color: 'sky' }, { label: 'Humidity', color: 'emerald' }, { label: 'Rain', color: 'indigo' }].map((item) => (
-            <div key={item.label} className={`flex items-center gap-1.5 text-xs font-medium ${isDarkMode ? 'text-white/50' : 'text-slate-600'}`}>
+          {[{ label: t("temperatureUnit"), color: 'sky' }, { label: t("humidity"), color: 'emerald' }, { label: t("rainChance"), color: 'indigo' }].map((item, idx) => (
+            <div key={idx} className={`flex items-center gap-1.5 text-xs font-medium ${isDarkMode ? 'text-white/50' : 'text-slate-600'}`}>
               <div className={`w-3 h-0.5 rounded-full bg-${item.color}-400`} />
               {item.label}
             </div>

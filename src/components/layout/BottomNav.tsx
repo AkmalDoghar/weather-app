@@ -81,9 +81,15 @@ export const BottomNav: React.FC = () => {
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
-            const label =
-              (t(item.defaultLabel.toLowerCase() as any) as string) ||
-              item.defaultLabel;
+            const keyMap: Record<string, "home" | "forecast" | "radar" | "air" | "compare"> = {
+              "/": "home",
+              "/forecast": "forecast",
+              "/radar": "radar",
+              "/air-quality": "air",
+              "/compare": "compare",
+            };
+            const translationKey = keyMap[item.href] || "home";
+            const label = t(translationKey);
 
             return (
               <Link

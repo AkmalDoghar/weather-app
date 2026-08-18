@@ -78,7 +78,7 @@ export const AirQualityCard: React.FC = () => {
             className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-xl border border-emerald-500/20 hover:bg-emerald-500/20 transition-all"
           >
             <ExternalLink className="w-3 h-3" />
-            Full View
+            {t("air")}
           </motion.div>
         </Link>
       </div>

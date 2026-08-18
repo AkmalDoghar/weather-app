@@ -35,7 +35,7 @@ const STATUS_STYLES: Record<ActivityStatus, { border: string; badge: string; ico
 };
 
 export const ActivityAdvisorCard: React.FC = () => {
-  const { weatherData, isDarkMode } = useWeather();
+  const { weatherData, isDarkMode, t } = useWeather();
   const [expanded, setExpanded] = useState(false);
 
   if (!weatherData?.activities || weatherData.activities.length === 0) return null;
@@ -57,10 +57,10 @@ export const ActivityAdvisorCard: React.FC = () => {
         </div>
         <div>
           <h3 className={`font-black text-base tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-            Activity Advisor
+            {t('activityAdvisorTitle')}
           </h3>
           <p className={`text-[11px] ${isDarkMode ? 'text-white/50' : 'text-slate-500'}`}>
-            Today's outdoor activity conditions
+            {t('activityAdvisorSubtitle')}
           </p>
         </div>
       </div>

@@ -8,8 +8,10 @@ import { CoolWeatherIcon } from './CoolWeatherIcon';
 import { Droplets, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
+import { translateDay } from '@/lib/translations';
+
 export const SevenDayForecast: React.FC = () => {
-  const { weatherData, isLoading, tempUnit, isDarkMode, t } = useWeather();
+  const { weatherData, isLoading, tempUnit, isDarkMode, language, t } = useWeather();
 
   if (!weatherData) return null;
 
@@ -43,7 +45,7 @@ export const SevenDayForecast: React.FC = () => {
             className="flex items-center gap-1.5 text-xs font-bold text-sky-500 bg-sky-500/10 px-3 py-1.5 rounded-xl border border-sky-500/20 hover:bg-sky-500/20 transition-all"
           >
             <ExternalLink className="w-3.5 h-3.5" />
-            Full View
+            {t("forecast")}
           </motion.div>
         </Link>
       </div>
@@ -62,7 +64,7 @@ export const SevenDayForecast: React.FC = () => {
               className="flex items-center gap-3 p-3 rounded-2xl border border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5 transition-all cursor-default"
             >
               <div className={`w-12 text-xs font-bold ${isDarkMode ? 'text-white/70' : 'text-slate-700'}`}>
-                {i === 0 ? 'Today' : item.dayName}
+                {i === 0 ? t("todayLabel") : translateDay(item.dayName, language)}
               </div>
               <CoolWeatherIcon icon={item.icon} size="sm" />
               <div className="flex items-center gap-1 text-[11px] font-bold text-sky-500 w-10">

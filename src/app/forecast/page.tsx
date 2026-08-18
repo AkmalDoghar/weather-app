@@ -17,8 +17,10 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { PageLoader } from '@/components/layout/PageLoader';
 import { CoolWeatherIcon } from '@/components/weather/CoolWeatherIcon';
 
+import { translateCondition, translateDay } from '@/lib/translations';
+
 function DayCard3D({ item, unitTemp, index }: { item: any; unitTemp: any; index: number }) {
-  const { isDarkMode } = useWeather();
+  const { isDarkMode, language, t } = useWeather();
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -68,13 +70,13 @@ function DayCard3D({ item, unitTemp, index }: { item: any; unitTemp: any; index:
         <div className="flex items-center justify-between">
           <div>
             <div className={`text-lg font-black ${isToday ? (isDarkMode ? 'text-sky-200' : 'text-sky-950') : (isDarkMode ? 'text-white' : 'text-slate-900')}`}>
-              {isToday ? 'Today' : item.dayName}
+              {isToday ? t("todayLabel") : translateDay(item.dayName, language)}
             </div>
             <div className={`text-xs ${isDarkMode ? 'text-white/40' : 'text-slate-500'}`}>{item.date}</div>
           </div>
           {isToday && (
             <span className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full bg-sky-500/20 text-sky-500 border border-sky-500/30">
-              NOW
+              {t("nowLabel")}
             </span>
           )}
         </div>
@@ -83,7 +85,9 @@ function DayCard3D({ item, unitTemp, index }: { item: any; unitTemp: any; index:
         <div className="flex justify-center" style={{ transform: 'translateZ(20px)' }}>
           <CoolWeatherIcon icon={item.icon} size="lg" />
         </div>
-        <div className={`text-sm font-semibold text-center ${isDarkMode ? 'text-white/70' : 'text-slate-700'}`}>{item.conditionText}</div>
+        <div className={`text-sm font-semibold text-center ${isDarkMode ? 'text-white/70' : 'text-slate-700'}`}>
+          {translateCondition(item.conditionText, language)}
+        </div>
 
         {/* Temperature */}
         <div className="flex items-center justify-between">
@@ -112,11 +116,11 @@ function DayCard3D({ item, unitTemp, index }: { item: any; unitTemp: any; index:
         <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
           <div className="flex items-center gap-1.5 text-sky-500 bg-sky-500/10 px-3 py-1.5 rounded-xl border border-sky-500/20">
             <Droplets className="w-3.5 h-3.5" />
-            Rain {item.rainChance}%
+            {t("rainLabel")} {item.rainChance}%
           </div>
           <div className="flex items-center gap-1.5 text-amber-500 bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20">
             <Sun className="w-3.5 h-3.5" />
-            UV {Math.round(item.uvIndexMax)}
+            {t("uvLabel")} {Math.round(item.uvIndexMax)}
           </div>
         </div>
 
@@ -133,9 +137,9 @@ function DayCard3D({ item, unitTemp, index }: { item: any; unitTemp: any; index:
 }
 
 export default function ForecastPage() {
-  const { weatherData, location, tempUnit, isDarkMode, isLoading } = useWeather();
+  const { weatherData, location, tempUnit, isDarkMode, isLoading, t } = useWeather();
 
-  if (isLoading) return <PageLoader isDarkMode={isDarkMode} message="Loading forecast..." />;
+  if (isLoading) return <PageLoader isDarkMode={isDarkMode} message={t("loading")} />;
 
   return (
     <div className={`min-h-screen transition-colors duration-500 ${
@@ -161,15 +165,15 @@ export default function ForecastPage() {
         />
       </div>
 
-      {/* Floating Western Fire Chiefs / Mapbox Style Header */}
+      {/* Floating Header */}
       <PageHeader
-        title="7-Day Forecast"
+        title={t("sevenDayForecast")}
         subtitle={`${location.name}, ${location.country}`}
         icon={<Calendar className="w-5 h-5 text-sky-400" />}
         isDarkMode={isDarkMode}
         extra={
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-bold shadow-sm">
-            <Sun className="w-3.5 h-3.5 text-amber-400" /> <span className="hidden sm:inline">Daily Outlook</span><span className="sm:hidden">Outlook</span>
+            <Sun className="w-3.5 h-3.5 text-amber-400" /> <span>{t("dailyOutlook")}</span>
           </div>
         }
       />

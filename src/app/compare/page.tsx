@@ -22,10 +22,12 @@ import {
 import { PageHeader } from "@/components/layout/PageHeader";
 import { PageLoader } from "@/components/layout/PageLoader";
 
-export default function ComparePage() {
-  const { weatherData, location, tempUnit, isDarkMode, isLoading } = useWeather();
+import { translateCondition } from "@/lib/translations";
 
-  if (isLoading) return <PageLoader isDarkMode={isDarkMode} message="Loading compare data..." />;
+export default function ComparePage() {
+  const { weatherData, location, tempUnit, isDarkMode, isLoading, language, t } = useWeather();
+
+  if (isLoading) return <PageLoader isDarkMode={isDarkMode} message={t("loadingCompare")} />;
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [suggestions, setSuggestions] = useState<LocationData[]>([]);
@@ -73,15 +75,15 @@ export default function ComparePage() {
       className={`min-h-screen relative flex flex-col theme-glassmorphism ${isDarkMode ? "text-white" : "text-slate-900"}`}
     >
       <BackgroundManager />
-      {/* Floating Western Fire Chiefs / Mapbox Style Header */}
+      {/* Floating Header */}
       <PageHeader
-        title="Compare Cities"
-        subtitle="Compare weather conditions side by side"
+        title={t("compareCities")}
+        subtitle={t("compareSubtitle")}
         icon={<GitCompare className="w-5 h-5 text-purple-400" />}
         isDarkMode={isDarkMode}
         extra={
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-300 text-xs font-bold shadow-sm">
-            <GitCompare className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Side-by-Side</span><span className="sm:hidden">Compare</span>
+            <GitCompare className="w-3.5 h-3.5" /> <span className="hidden sm:inline">{t("sideBySide")}</span><span className="sm:hidden">{t("compare")}</span>
           </div>
         }
       />
@@ -107,7 +109,7 @@ export default function ComparePage() {
             <input
               value={query}
               onChange={(e) => handleSearch(e.target.value)}
-              placeholder="Search second city to compare..."
+              placeholder={t("searchSecondCity")}
               className={`flex-1 bg-transparent text-sm outline-none ${isDarkMode ? "text-white placeholder-white/40" : "text-slate-900 placeholder-slate-500"}`}
             />
             {query && (
@@ -188,7 +190,7 @@ export default function ComparePage() {
                   {formatTemp(current.temperature, tempUnit)}
                 </div>
                 <div className="text-sky-300 font-semibold">
-                  {current.conditionText}
+                  {translateCondition(current.conditionText, language)}
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-xs">
                   <div
@@ -260,7 +262,7 @@ export default function ComparePage() {
                       : "text-slate-500 font-semibold text-sm"
                   }
                 >
-                  Search a city above
+                  {t("searchCityAbove")}
                 </div>
               )}
             </div>
@@ -277,7 +279,7 @@ export default function ComparePage() {
                   {formatTemp(compareWeather.current.temperature, tempUnit)}
                 </div>
                 <div className="text-sky-300 font-semibold">
-                  {compareWeather.current.conditionText}
+                  {translateCondition(compareWeather.current.conditionText, language)}
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-xs">
                   <div
@@ -314,7 +316,7 @@ export default function ComparePage() {
                     : "text-slate-500 text-sm py-6 text-center"
                 }
               >
-                <p>Unable to load comparison data for this city.</p>
+                <p>{t("unableCompareData")}</p>
               </div>
             ) : (
               <div
@@ -325,7 +327,7 @@ export default function ComparePage() {
                 }
               >
                 <GitCompare className="w-12 h-12" />
-                <p className="text-sm">Select a second city to compare</p>
+                <p className="text-sm">{t("selectSecondCity")}</p>
               </div>
             )}
           </motion.div>

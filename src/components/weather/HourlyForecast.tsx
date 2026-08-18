@@ -19,6 +19,8 @@ export const HourlyForecast: React.FC = () => {
 
   if (!weatherData) return null;
 
+  const displayHours = weatherData.hourly;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -47,7 +49,7 @@ export const HourlyForecast: React.FC = () => {
       </div>
 
       <div ref={scrollRef} className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
-        {weatherData.hourly.map((item, i) => (
+        {displayHours.map((item, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, x: 20 }}

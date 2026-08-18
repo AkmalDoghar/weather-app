@@ -99,8 +99,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span
               className={`ml-2 mr-2 text-lg font-bold ${isDarkMode ? "text-white" : "text-slate-900"}`}
             >
-              Sky Plus
-              
+              {t("appName")}
             </span>
 
           </div>

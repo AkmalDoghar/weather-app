@@ -74,7 +74,8 @@ export async function reverseGeocode(lat: number, lon: number): Promise<Location
 }
 
 export async function fetchWeatherData(location: LocationData): Promise<CompleteWeatherData> {
-  const { latitude: lat, longitude: lon } = location;
+  const lat = typeof location?.latitude === 'number' && !isNaN(location.latitude) ? location.latitude : 24.8607;
+  const lon = typeof location?.longitude === 'number' && !isNaN(location.longitude) ? location.longitude : 67.0011;
 
   const weatherPromise = axios.get(OPEN_METEO_BASE, {
     params: {
@@ -91,7 +92,7 @@ export async function fetchWeatherData(location: LocationData): Promise<Complete
         'pressure_msl',
         'wind_speed_10m',
         'wind_direction_10m',
-      ],
+      ].join(','),
       hourly: [
         'temperature_2m',
         'relative_humidity_2m',
@@ -99,7 +100,7 @@ export async function fetchWeatherData(location: LocationData): Promise<Complete
         'precipitation',
         'weather_code',
         'wind_speed_10m',
-      ],
+      ].join(','),
       daily: [
         'weather_code',
         'temperature_2m_max',
@@ -108,7 +109,7 @@ export async function fetchWeatherData(location: LocationData): Promise<Complete
         'sunset',
         'uv_index_max',
         'precipitation_probability_max',
-      ],
+      ].join(','),
       timezone: 'auto',
       forecast_days: 7,
     },
@@ -119,7 +120,7 @@ export async function fetchWeatherData(location: LocationData): Promise<Complete
       params: {
         latitude: lat,
         longitude: lon,
-        current: ['us_aqi', 'pm10', 'pm2_5', 'carbon_monoxide', 'nitrogen_dioxide', 'sulphur_dioxide', 'ozone'],
+        current: ['us_aqi', 'pm10', 'pm2_5', 'carbon_monoxide', 'nitrogen_dioxide', 'sulphur_dioxide', 'ozone'].join(','),
         timezone: 'auto',
       },
     })
@@ -136,11 +137,39 @@ export async function fetchWeatherData(location: LocationData): Promise<Complete
   const currentTemp = wData.current.temperature_2m;
   const feelsLike = wData.current.apparent_temperature;
 
-  const hourlyList: HourlyForecastData[] = wData.hourly.time.slice(0, 24).map((timeStr: string, idx: number) => {
+  const currentIso = wData.current.time || '';
+  const currentHourPrefix = currentIso ? currentIso.substring(0, 13) : '';
+  let currentHourIdx = wData.hourly.time.findIndex((tStr: string) =>
+    tStr.startsWith(currentHourPrefix)
+  );
+  if (currentHourIdx < 0) {
+    const nowMs = Date.now();
+    currentHourIdx = wData.hourly.time.findIndex(
+      (tStr: string) => new Date(tStr + 'Z').getTime() + 3600000 > nowMs
+    );
+  }
+  if (currentHourIdx < 0) currentHourIdx = 0;
+
+  const hourlySlice = wData.hourly.time.slice(currentHourIdx, currentHourIdx + 24);
+
+  const hourlyList: HourlyForecastData[] = hourlySlice.map((timeStr: string, idxInSlice: number) => {
+    const idx = currentHourIdx + idxInSlice;
     const code = wData.hourly.weather_code[idx];
     const cond = getWeatherCondition(code, true);
-    const dateObj = new Date(timeStr);
-    const timeFormatted = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
+    
+    // Parse 12-hour formatted time directly from Open-Meteo local ISO string (e.g. "2026-08-17T15:00")
+    let timeFormatted = timeStr;
+    if (timeStr && timeStr.includes('T')) {
+      const hStr = timeStr.split('T')[1]?.split(':')[0];
+      const h = parseInt(hStr, 10);
+      if (!isNaN(h)) {
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        timeFormatted = `${h12} ${ampm}`;
+      }
+    }
+
+    const dateObj = new Date(timeStr + 'Z');
     const precip = wData.hourly.precipitation ? wData.hourly.precipitation[idx] || 0 : 0;
     return {
       time: timeFormatted,

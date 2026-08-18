@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 export const BestTimeCard: React.FC = () => {
-  const { weatherData, tempUnit, isDarkMode } = useWeather();
+  const { weatherData, tempUnit, isDarkMode, t } = useWeather();
 
   if (!weatherData?.bestTimeWindow) return null;
   const win = weatherData.bestTimeWindow;
@@ -39,12 +39,12 @@ export const BestTimeCard: React.FC = () => {
             <h3
               className={`font-black text-base tracking-tight ${isDarkMode ? "text-white" : "text-slate-900"}`}
             >
-              Best Time to Go Outside
+              {t("bestTimeTitle")}
             </h3>
             <p
               className={`text-[11px] ${isDarkMode ? "text-white/50" : "text-slate-500"}`}
             >
-              Optimal weather window today
+              {t("bestTimeSubtitle")}
             </p>
           </div>
           <div className="ml-auto">
