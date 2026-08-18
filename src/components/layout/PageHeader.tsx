@@ -27,7 +27,8 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       initial={{ opacity: 0, y: -15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
-      className={`sticky top-0 z-50 w-full mb-6 sm:mb-8 border-b backdrop-blur-2xl transition-all pt-[env(safe-area-inset-top,12px)] ${
+      style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+      className={`sticky top-0 z-50 w-full mb-6 sm:mb-8 border-b backdrop-blur-2xl transition-all ${
         isDarkMode
           ? "bg-[#060b19]/80 border-white/15 text-white shadow-lg shadow-black/40"
           : "bg-white/85 border-slate-200/80 text-slate-900 shadow-sm"

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'skypulse-v1';
+const CACHE_NAME = 'skypulse-v2';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
@@ -7,21 +7,17 @@ const STATIC_ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  // Do NOT skip waiting here — we want to notify first so user can choose to update
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
-      );
-    })
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    )
   );
   self.clients.claim();
 });
@@ -31,5 +27,12 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
       fetch(event.request).catch(() => caches.match('/'))
     );
+  }
+});
+
+// Listen for "SKIP_WAITING" message from the UI → activate new SW immediately
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
   }
 });

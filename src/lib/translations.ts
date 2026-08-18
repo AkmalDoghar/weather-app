@@ -23,6 +23,12 @@ export const translations = {
     downloadAppSubtitle: "Install SkyPulse PRO on your mobile home screen",
     installAppBtn: "Download & Install App",
     appInstalled: "App Installed & Active",
+    updateApp: "Update SkyPulse PRO",
+    updateAppSubtitle: "A new version of the app is available!",
+    updateNowBtn: "Update App Now",
+    checkForUpdates: "Check for Updates",
+    appVersionLabel: "App Version",
+    latestVersionText: "SkyPulse PRO Engine • Up to date",
 
     // Metrics & Details
     feelsLike: "Feels Like",
@@ -170,6 +176,12 @@ export const translations = {
     downloadAppSubtitle: "سکائی پلس پرو کو اپنے موبائل فون میں انسٹال کریں",
     installAppBtn: "ایپ ڈاؤن لوڈ کریں",
     appInstalled: "ایپ انسٹال ہے",
+    updateApp: "سکائی پلس پرو اپڈیٹ کریں",
+    updateAppSubtitle: "نئی ورژن دستیاب ہے!",
+    updateNowBtn: "ابھی اپڈیٹ کریں",
+    checkForUpdates: "اپڈیٹ چیک کریں",
+    appVersionLabel: "ایپ ورژن",
+    latestVersionText: "سکائی پلس پرو • جدید ترین",
 
     // Metrics & Details
     feelsLike: "محسوس ہوتا ہے",

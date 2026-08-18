@@ -53,7 +53,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${inter.variable} ${manrope.variable} ${poppins.variable}`} suppressHydrationWarning>
-      <body className="bg-[#060b19] text-slate-100 antialiased selection:bg-[#4FC3F7] selection:text-slate-950 pb-24 font-sans" suppressHydrationWarning>
+      <body className="text-slate-100 antialiased selection:bg-[#4FC3F7] selection:text-slate-950 pb-24 font-sans min-h-screen" suppressHydrationWarning>
         <Providers>
           {children}
           <BottomNav />

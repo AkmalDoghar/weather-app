@@ -25,6 +25,14 @@
     --wx-text-muted: #94a3b8;
   }
 
+  /* Fill entire screen including behind status bar */
+  html {
+    background-color: #060b19;
+  }
+  html:not(.dark) {
+    background-color: #f1f5f9;
+  }
+
   body {
     background-color: #060b19;
     color: #f8fafc;

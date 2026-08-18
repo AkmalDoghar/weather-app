@@ -46,6 +46,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     sendManualNotification,
     isAppInstalled,
     triggerInstallApp,
+    isUpdateAvailable,
+    applyUpdate,
     t,
   } = useWeather();
 
@@ -388,6 +390,56 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </>
             )}
           </button>
+        </div>
+
+        {/* App Update Card — appears only when update is available */}
+        {isUpdateAvailable && (
+          <div
+            className={`p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all ${
+              isDarkMode
+                ? "bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-yellow-500/15 border-amber-500/40"
+                : "bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 border-amber-200"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className="relative p-2.5 rounded-xl bg-amber-500/20 border border-amber-400/40 shadow-md">
+                <Download className="w-5 h-5 text-amber-400" />
+                <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 animate-bounce border-2 border-[#060b19]" />
+              </div>
+              <div>
+                <div className={`text-xs font-bold ${isDarkMode ? "text-white" : "text-slate-900"}`}>
+                  {t("updateApp")}
+                </div>
+                <div className={`text-[11px] ${isDarkMode ? "text-amber-300/80" : "text-amber-700"}`}>
+                  {t("updateAppSubtitle")}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={applyUpdate}
+              className="px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg transition-all bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 hover:from-amber-300 hover:to-orange-400 shadow-amber-500/30 active:scale-95"
+            >
+              <Download className="w-4 h-4" />
+              <span>{t("updateNowBtn")}</span>
+            </button>
+          </div>
+        )}
+
+        {/* App Version Info */}
+        <div
+          className={`flex items-center justify-between px-4 py-3 rounded-2xl border ${
+            isDarkMode
+              ? "bg-white/3 border-white/8 text-white/40"
+              : "bg-slate-50 border-slate-200 text-slate-400"
+          }`}
+        >
+          <div className="flex items-center gap-2 text-[11px] font-semibold">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>{t("appVersionLabel")}</span>
+          </div>
+          <span className="text-[11px] font-bold">
+            v2.0.0 &nbsp;•&nbsp; {isUpdateAvailable ? t("updateApp") : t("latestVersionText")}
+          </span>
         </div>
 
         {/* Dark Mode Toggle */}

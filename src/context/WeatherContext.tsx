@@ -49,6 +49,8 @@ interface WeatherContextType {
   useGPSLocation: () => void;
   isAppInstalled: boolean;
   triggerInstallApp: () => void;
+  isUpdateAvailable: boolean;
+  applyUpdate: () => void;
 }
 
 const DEFAULT_LOCATION: LocationData = {
@@ -135,6 +137,55 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({
       if (typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
         window.open("https://skyplusweather.vercel.app/", "_blank");
       }
+    }
+  };
+
+  // SW Update detection
+  const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
+  const swRegistrationRef = React.useRef<ServiceWorkerRegistration | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
+
+    navigator.serviceWorker.getRegistration().then((reg) => {
+      if (!reg) return;
+      swRegistrationRef.current = reg;
+
+      // Already has a waiting worker = update available
+      if (reg.waiting) {
+        setIsUpdateAvailable(true);
+      }
+
+      // Listen for new worker arriving
+      reg.addEventListener("updatefound", () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener("statechange", () => {
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+            setIsUpdateAvailable(true);
+          }
+        });
+      });
+
+      // Poll for updates every 60 seconds
+      const checkInterval = setInterval(() => reg.update(), 60 * 1000);
+      return () => clearInterval(checkInterval);
+    });
+
+    // When controller changes (after SKIP_WAITING) reload to apply update
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
+    });
+  }, []);
+
+  const applyUpdate = () => {
+    const reg = swRegistrationRef.current;
+    if (reg && reg.waiting) {
+      reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }
   };
 
@@ -572,6 +623,8 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({
         useGPSLocation,
         isAppInstalled,
         triggerInstallApp,
+        isUpdateAvailable,
+        applyUpdate,
       }}
     >
       {children}
