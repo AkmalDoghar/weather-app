@@ -27,15 +27,13 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       initial={{ opacity: 0, y: -15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: "easeOut" }}
-      className="sticky top-3 z-50 w-full px-2 sm:px-4 mb-6 sm:mb-8"
+      className={`sticky top-0 z-50 w-full mb-6 sm:mb-8 border-b backdrop-blur-2xl transition-all pt-[env(safe-area-inset-top,12px)] ${
+        isDarkMode
+          ? "bg-[#060b19]/80 border-white/15 text-white shadow-lg shadow-black/40"
+          : "bg-white/85 border-slate-200/80 text-slate-900 shadow-sm"
+      }`}
     >
-      <div
-        className={`max-w-7xl mx-auto flex items-center justify-between gap-3 px-3 py-2 sm:px-5 sm:py-3 rounded-[24px] sm:rounded-full border backdrop-blur-2xl shadow-2xl transition-all ${
-          isDarkMode
-            ? "bg-[#0b1528]/50 border-white/15 text-white shadow-black/30"
-            : "bg-white/40 border-slate-200/60 text-slate-900 shadow-slate-900/10"
-        }`}
-      >
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-3.5">
         {/* Left: Integrated Glass Back Button */}
         <Link href={backHref} passHref className="flex-shrink-0 select-none">
           <motion.div
