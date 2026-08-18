@@ -67,7 +67,7 @@ export const BottomNav: React.FC = () => {
 
         {/* Glass Container */}
         <div
-          className={`flex items-center justify-between gap-1 sm:gap-2 p-2.5 sm:p-3 rounded-[2.5rem] backdrop-blur-lg overflow-hidden max-w-full border transition-all duration-300 ${
+          className={`grid grid-cols-5 w-full items-center p-1.5 sm:p-2.5 rounded-[2.5rem] backdrop-blur-lg border transition-all duration-300 ${
             isDarkMode
               ? "bg-slate-950/20 border-white/10 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.45)]"
               : "bg-white/20 border-slate-200/30 shadow-[0_10px_25px_-8px_rgba(15,23,42,0.12)]"
@@ -95,12 +95,12 @@ export const BottomNav: React.FC = () => {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex-shrink-0 min-w-0"
+                className="flex items-center justify-center w-full"
               >
                 <motion.div
                   whileHover={{ scale: 1.03, y: -1 }}
                   whileTap={{ scale: 0.97 }}
-                  className={`relative flex flex-col items-center justify-center gap-1 px-2.5 py-2.5 sm:px-3 sm:py-2.5 rounded-2xl transition-all duration-300 min-w-[3.1rem] sm:min-w-[3.6rem] ${
+                  className={`relative flex flex-col items-center justify-center gap-1 w-full py-2 px-1 rounded-2xl transition-all duration-300 ${
                     isActive
                       ? "text-white"
                       : isDarkMode
@@ -130,7 +130,7 @@ export const BottomNav: React.FC = () => {
 
                   {/* Text Label */}
                   <span
-                    className={`text-[10px] sm:text-xs font-semibold tracking-tight relative z-10 whitespace-nowrap transition-colors ${
+                    className={`text-[10px] sm:text-xs font-semibold tracking-tight relative z-10 whitespace-nowrap transition-colors truncate max-w-full ${
                       isActive
                         ? isDarkMode
                           ? "text-white"
