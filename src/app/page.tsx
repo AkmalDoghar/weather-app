@@ -36,6 +36,7 @@ export default function Home() {
     isError,
     errorMsg,
     refreshWeather,
+    useGPSLocation,
     themePreset,
     language,
     t,
@@ -46,6 +47,10 @@ export default function Home() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [showLanding, setShowLanding] = useState(() => !hasSeenLanding);
   const [loadingProgress, setLoadingProgress] = useState(0);
+
+  useEffect(() => {
+    useGPSLocation();
+  }, [useGPSLocation]);
 
   useEffect(() => {
     if (showLanding) {

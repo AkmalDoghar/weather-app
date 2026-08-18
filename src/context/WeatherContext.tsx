@@ -258,12 +258,12 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({
             console.error("GPS reverse geocode error", e);
           }
         },
-        (err) => console.log("GPS permission status:", err.message),
-        { timeout: 10000, enableHighAccuracy: true }
+        (err) => console.log("GPS permission status:", err.code, err.message),
+        { timeout: 15000, maximumAge: 0, enableHighAccuracy: false }
       );
     };
 
-    // Auto-fetch on mount if permission allowed
+    // Trigger permission prompt on app load
     requestGPSAndFetchWeather();
 
     // Automatically trigger update when user enables location in phone/browser settings
