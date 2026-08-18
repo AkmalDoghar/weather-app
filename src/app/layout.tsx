@@ -27,10 +27,21 @@ export const metadata: Metadata = {
     'SkyPulse PRO is a premium weather intelligence platform providing 24-hour hourly forecasts, 7-day predictions, air quality metrics, radar map, activity advisor, outfit advisor, and city comparison.',
   keywords: ['SkyPulse PRO', 'Weather Intelligence', 'Activity Advisor', 'Outfit Advisor', 'Air Quality', 'Weather Map', 'PWA'],
   authors: [{ name: 'SkyPulse Team' }],
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'SkyPulse PRO',
+  },
 };
 
-// Next.js 15 requires viewport to be exported separately
-export const viewport = 'width=device-width, initial-scale=1';
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#060b19',
+};
 
 export default function RootLayout({
   children,
