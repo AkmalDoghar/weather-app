@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { WeatherProvider } from '@/context/WeatherContext';
+import { StatusBarManager } from '@/components/layout/StatusBarManager';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -28,7 +29,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WeatherProvider>{children}</WeatherProvider>
+      <WeatherProvider>
+        <StatusBarManager />
+        {children}
+      </WeatherProvider>
     </QueryClientProvider>
   );
 }

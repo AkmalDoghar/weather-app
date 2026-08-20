@@ -36,6 +36,7 @@ export interface HourlyForecastData {
   conditionCode: number;
   conditionText: string;
   icon: string;
+  isDay: boolean;
   rainChance: number;
   humidity: number;
   windSpeed: number;

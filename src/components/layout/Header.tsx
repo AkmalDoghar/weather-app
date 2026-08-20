@@ -85,8 +85,8 @@ export const Header: React.FC<HeaderProps> = ({
       style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
       className={`sticky top-0 z-40 backdrop-blur-2xl border-b transition-all duration-300 ${
         isDarkMode
-          ? "bg-[#060b19]/80 border-white/10 shadow-lg shadow-black/30"
-          : "bg-white/85 border-slate-200/80 shadow-sm"
+          ? "transparent border-white/10 shadow-lg shadow-black/30"
+          : "transparent border-slate-200/80 shadow-sm"
       }`}
     >
       <div className="max-w-7xl mx-auto flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3 px-4 py-2.5 sm:px-6 sm:py-3">

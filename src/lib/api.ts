@@ -152,10 +152,31 @@ export async function fetchWeatherData(location: LocationData): Promise<Complete
 
   const hourlySlice = wData.hourly.time.slice(currentHourIdx, currentHourIdx + 24);
 
+  const dailySunMap = new Map<string, { rise: number; set: number }>();
+  wData.daily.time.forEach((dateStr: string, idx: number) => {
+    const parseIso = (iso: string) => {
+      if (!iso) return null;
+      const parts = iso.split('T')[1]?.split(':');
+      if (!parts) return null;
+      return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+    };
+    const rise = parseIso(wData.daily.sunrise[idx]);
+    const set = parseIso(wData.daily.sunset[idx]);
+    if (rise !== null && set !== null) dailySunMap.set(dateStr, { rise, set });
+  });
+
   const hourlyList: HourlyForecastData[] = hourlySlice.map((timeStr: string, idxInSlice: number) => {
     const idx = currentHourIdx + idxInSlice;
     const code = wData.hourly.weather_code[idx];
-    const cond = getWeatherCondition(code, true);
+
+    const datePart = timeStr.includes('T') ? timeStr.split('T')[0] : '';
+    const hStr = timeStr.includes('T') ? timeStr.split('T')[1]?.split(':')[0] : '12';
+    const h = parseInt(hStr, 10) || 0;
+    const sunTimes = dailySunMap.get(datePart);
+    const isDayHour =
+      sunTimes && !isNaN(h) ? h * 60 >= sunTimes.rise && h * 60 < sunTimes.set : h >= 6 && h < 19;
+
+    const cond = getWeatherCondition(code, isDayHour);
     
     // Parse 12-hour formatted time directly from Open-Meteo local ISO string (e.g. "2026-08-17T15:00")
     let timeFormatted = timeStr;
@@ -178,6 +199,7 @@ export async function fetchWeatherData(location: LocationData): Promise<Complete
       conditionCode: code,
       conditionText: cond.text,
       icon: cond.icon,
+      isDay: isDayHour,
       rainChance: wData.hourly.precipitation_probability[idx] || 0,
       humidity: wData.hourly.relative_humidity_2m[idx],
       windSpeed: wData.hourly.wind_speed_10m[idx],

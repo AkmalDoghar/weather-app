@@ -3,7 +3,7 @@
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useWeather } from '@/context/WeatherContext';
-import { CoolWeatherIcon } from '@/components/weather/CoolWeatherIcon';
+import { FilledSun, FilledMoon, CoolWeatherIcon } from '@/components/weather/CoolWeatherIcon';
 import { formatTemp } from '@/lib/utils';
 import { Droplets, CloudRain, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -68,7 +68,15 @@ export const HourlyForecast: React.FC = () => {
               {i === 0 ? 'NOW' : item.time}
             </div>
             <div className="flex justify-center">
-              <CoolWeatherIcon icon={item.icon} size="sm" />
+              {item.icon === 'Sun' || item.icon === 'Moon' ? (
+                item.isDay ? (
+                  <FilledSun className="w-6 h-6 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
+                ) : (
+                  <FilledMoon className="w-6 h-6 text-indigo-200 drop-shadow-[0_0_8px_rgba(199,210,254,0.6)]" />
+                )
+              ) : (
+                <CoolWeatherIcon icon={item.icon} size="sm" />
+              )}
             </div>
             <div className={`text-lg font-black ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
               {formatTemp(item.temperature, tempUnit)}

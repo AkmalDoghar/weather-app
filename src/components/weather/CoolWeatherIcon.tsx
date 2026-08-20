@@ -17,6 +17,21 @@ import {
   Droplets,
 } from 'lucide-react';
 
+export const FilledSun: React.FC<{ className?: string }> = ({ className }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+    <g stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none">
+      <path d="M12 2.5v3M12 18.5v3M4.4 4.4l2.12 2.12M17.48 17.48l2.12 2.12M2.5 12h3M18.5 12h3M4.4 19.6l2.12-2.12M17.48 6.52l2.12-2.12" />
+    </g>
+    <circle cx="12" cy="12" r="4.5" />
+  </svg>
+);
+
+export const FilledMoon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+  </svg>
+);
+
 interface CoolWeatherIconProps {
   icon: string;
   size?: 'sm' | 'md' | 'lg' | 'hero';

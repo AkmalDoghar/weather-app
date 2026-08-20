@@ -30,8 +30,8 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
       className={`sticky top-0 z-50 w-full mb-6 sm:mb-8 border-b backdrop-blur-2xl transition-all ${
         isDarkMode
-          ? "bg-[#060b19]/80 border-white/15 text-white shadow-lg shadow-black/40"
-          : "bg-white/85 border-slate-200/80 text-slate-900 shadow-sm"
+          ? "transparent border-white/15 text-white shadow-lg shadow-black/40"
+          : "transparent border-slate-200/80 text-slate-900 shadow-sm"
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-3.5">
