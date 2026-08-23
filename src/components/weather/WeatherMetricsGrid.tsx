@@ -15,6 +15,8 @@ import {
   Sunrise,
   Sunset,
   Moon,
+  Thermometer,
+  Zap,
 } from "lucide-react";
 
 const CHUNK_SIZE = 2; // two cards per column (stacked)
@@ -99,6 +101,25 @@ export const WeatherMetricsGrid: React.FC = () => {
             : "Unlikely",
     },
     {
+      icon: Thermometer,
+      label: "Dew Point",
+      value: `${Math.round(current.dewPoint ?? 0)}°`,
+      color: "teal",
+      desc:
+        (current.dewPoint ?? 0) > 24
+          ? "Very Humid"
+          : (current.dewPoint ?? 0) > 18
+            ? "Humid"
+            : "Comfortable",
+    },
+    {
+      icon: Zap,
+      label: "Wind Gust",
+      value: formatWind(current.windGust ?? current.windSpeed, speedUnit),
+      color: "violet",
+      desc: `Peak gust speed`,
+    },
+    {
       icon: Sunrise,
       label: t("sunrise"),
       value: astronomy.sunrise,
@@ -131,6 +152,7 @@ export const WeatherMetricsGrid: React.FC = () => {
     blue: "border-blue-500/30 text-blue-500 bg-blue-500/10",
     orange: "border-orange-500/30 text-orange-500 bg-orange-500/10",
     rose: "border-rose-500/30 text-rose-500 bg-rose-500/10",
+    violet: "border-violet-500/30 text-violet-500 bg-violet-500/10",
   };
 
   // chunk metrics into columns with CHUNK_SIZE items each

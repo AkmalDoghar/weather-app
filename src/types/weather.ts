@@ -14,10 +14,12 @@ export interface CurrentWeather {
   feelsLike: number;
   humidity: number;
   windSpeed: number;
+  windGust: number;
   windDirection: number;
   pressure: number;
   visibility: number;
   uvIndex: number;
+  dewPoint: number;
   cloudCover: number;
   rainChance: number;
   conditionCode: number;
@@ -83,7 +85,7 @@ export interface WeatherAlert {
 export interface AstronomyData {
   sunrise: string;
   sunset: string;
-  daylightDuration?: string;
+  daylightDuration: string;
   moonPhase: string;
   moonIllumination: number;
 }
